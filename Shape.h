@@ -5,6 +5,8 @@
 #include <FL/glu.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
+#include <vector>
+#include "Graph.h"
 
 #define PI glm::pi<float>() // PI is now a constant for 3.14159....
 
@@ -30,13 +32,18 @@ public:
     void setSegments(int segX, int segY) {
         m_segmentsX = segX;
         m_segmentsY = segY;
+        calculate();
     }
 
     virtual OBJ_TYPE getType() = 0;
     virtual void     draw(){};
     virtual void     drawNormal(){};
+    virtual void     calculate(){};
 
 protected:
+
+    std::vector<Graph> graphs;
+
     void normalizeNormal(float x, float y, float z) { normalizeNormal(glm::vec3(x, y, z)); };
 
     void normalizeNormal(glm::vec3 v) {
