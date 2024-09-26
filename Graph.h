@@ -4,10 +4,15 @@
 #include <vector>
 #include <glm/glm.hpp>
 
+class Vertex;
+class Edge;
+class Face;
+
 class Vertex {
 private:
     glm::vec3 position;
     glm::vec3 normal;
+    std::vector<Face*> faces;
 public:
     Vertex(glm::vec3 pos) : position(pos) { };
     ~Vertex() { };
@@ -57,10 +62,13 @@ public:
     void addVertex(Vertex v) { };
     void addEdge(Edge e) { };
     void addFace(Face f) { };
-    void getVertices() { };
-    void getEdges() { };
-    void getFaces() { };
+    const std::vector<Vertex>& const getVertices() { };
+    const Vertex& const getVertexAt(glm::vec3 pos) { };
+    const std::vector<Edge>& const getEdges() { };
+    const std::vector<Face>& const getFaces() { };
     void clear() { };
+    Graph rotate(float angle_x, float angle_y, float angle_z) { };
+    Graph union_graph(std::vector<Graph> graphs) { };
 };
 
 #endif
