@@ -19,7 +19,8 @@ public:
 	void drawNormal() {
 	};
 
-	void calculate() { };
+	void calculate() { 
+	};
 
 private:
 };
