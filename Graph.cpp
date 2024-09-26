@@ -1,33 +1,56 @@
 #include "Graph.h"
 
-void Graph::addVertex(Vertex v) {
-
+void Graph::addVertex(Vertex* v) {
+    vertices.push_back(v);
 }
 
-void Graph::addEdge(Edge e) {
-
+void Graph::addEdge(Edge* e) {
+    edges.push_back(e);
 }
 
-void Graph::addFace(Face f) {
-
+void Graph::addFace(Face* f) {
+    faces.push_back(f);
 }
 
-const std::vector<Vertex>& const Graph::getVertices() {
+std::vector<Vertex*>& Graph::getVertices() {
     return vertices;
 }
 
-const Vertex& const Graph::getVertexAt(glm::vec3 pos) {
-
+Vertex* Graph::getVertexAt(glm::vec3 pos) {
+    for (auto v : vertices) {
+        if (v->getPos() == pos) {
+            return v;
+        }
+    }
 }
 
-const std::vector<Edge>& const Graph::getEdges() {
+std::vector<Edge*>& Graph::getEdges() {
     return edges;
 }
 
-const std::vector<Face>& const Graph::getFaces() {
+std::vector<Face*>& Graph::getFaces() {
     return faces;
 }
 
 void Graph::clear() {
+    for (auto v : vertices) {
+        delete v;
+    }
+    for (auto e : edges) {
+        delete e;
+    }
+    for (auto f : faces) {
+        delete f;
+    }
+    vertices.clear();
+    edges.clear();
+    faces.clear();
+}
+
+Graph Graph::rotate(float angle_x, float angle_y, float angle_z) {
+
+}
+
+Graph Graph::union_graph(std::vector<Graph> graphs) {
 
 }
