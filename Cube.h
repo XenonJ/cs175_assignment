@@ -12,15 +12,12 @@ public:
 		return SHAPE_CUBE;
 	}
 
-	void draw() {
-	};
+	void draw();
 
 
-	void drawNormal() {
-	};
+	void drawNormal();
 
-	void calculate() { 
-	};
+	void calculate();
 
 private:
 };
