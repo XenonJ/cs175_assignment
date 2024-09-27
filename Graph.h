@@ -19,6 +19,8 @@ public:
     glm::vec3 getPos() { return position; };
     void setNormal(glm::vec3 norm) { normal = norm; };
     glm::vec3 getNormals() { return normal; };
+    void addFace(Face* f) { faces.push_back(f); };
+    std::vector<Face*> getFaces() { return faces; };
 };
 
 class Edge {
@@ -69,6 +71,7 @@ public:
     std::vector<Edge*>& getEdges();
     std::vector<Face*>& getFaces();
     void clear();
+    void calculateVertexNormal();
     Graph rotate(float angle_x, float angle_y, float angle_z);
     Graph union_graph(std::vector<Graph> graphs);
 };

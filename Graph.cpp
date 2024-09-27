@@ -10,6 +10,10 @@ void Graph::addEdge(Edge* e) {
 
 void Graph::addFace(Face* f) {
     faces.push_back(f);
+    Vertex* const* vertices = f->getVertices();
+    for (int i = 0; i < 3; i++) {
+        vertices[i]->addFace(f);
+    }
 }
 
 std::vector<Vertex*>& Graph::getVertices() {
@@ -45,6 +49,17 @@ void Graph::clear() {
     vertices.clear();
     edges.clear();
     faces.clear();
+}
+
+void Graph::calculateVertexNormal() {
+    for (auto v : vertices) {
+        glm::vec3 normal(0.0f, 0.0f, 0.0f);
+        for (auto f : v->getFaces()) {
+            normal += f->getFaceNormal();
+        }
+        normal /= v->getFaces().size();
+        v->setNormal(normal);
+    }
 }
 
 Graph Graph::rotate(float angle_x, float angle_y, float angle_z) {
