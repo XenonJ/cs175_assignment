@@ -34,10 +34,10 @@ void drawNormalsFromFaces() {
         glm::vec3      faceNormal = glm::normalize(glm::cross(v1v0, v2v0));
 
         for (int i = 0; i < 3; ++i) {
-            const glm::vec3 &pos = verts[i]->getPos();
+            const glm::vec3 &pos = (verts[i]->getPos());
             glVertex3f(pos.x, pos.y, pos.z);
-            glVertex3f(pos.x + faceNormal.x * .2f, pos.y + faceNormal.y * .2f,
-                       pos.z + faceNormal.z * .2f);
+            glVertex3f(pos.x + faceNormal.x * .1f, pos.y + faceNormal.y * .1f,
+                       pos.z + faceNormal.z * .1f);
         }
     }
     glEnd();
