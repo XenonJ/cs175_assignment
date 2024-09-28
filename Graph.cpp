@@ -1,9 +1,12 @@
 #include "Graph.h"
+#include <iostream>
 
+// TODO: same vertex should not be added?
 void Graph::addVertex(Vertex* v) {
     vertices.push_back(v);
 }
 
+// TODO: not using edges for now
 void Graph::addEdge(Edge* e) {
     edges.push_back(e);
 }
@@ -20,14 +23,17 @@ std::vector<Vertex*>& Graph::getVertices() {
     return vertices;
 }
 
+// TODO: improve speed
 Vertex* Graph::getVertexAt(glm::vec3 pos) {
     for (auto v : vertices) {
         if (v->getPos() == pos) {
             return v;
         }
     }
+    return nullptr;
 }
 
+// TODO: not using edges for now
 std::vector<Edge*>& Graph::getEdges() {
     return edges;
 }
@@ -57,15 +63,82 @@ void Graph::calculateVertexNormal() {
         for (auto f : v->getFaces()) {
             normal += f->getFaceNormal();
         }
-        normal /= v->getFaces().size();
+        normal = glm::normalize(normal);
         v->setNormal(normal);
     }
 }
 
-Graph Graph::rotate(float angle_x, float angle_y, float angle_z) {
-
+// rotate the Graph and return a new Graph instance
+Graph* Graph::rotate(float angle_x, float angle_y, float angle_z) {
+    glm::mat4 rotationX = glm::rotate(glm::mat4(1.0f), glm::radians(angle_x), glm::vec3(1, 0, 0));
+    glm::mat4 rotationY = glm::rotate(glm::mat4(1.0f), glm::radians(angle_y), glm::vec3(0, 1, 0));
+    glm::mat4 rotationZ = glm::rotate(glm::mat4(1.0f), glm::radians(angle_z), glm::vec3(0, 0, 1));
+    // orders: x -> y -> z
+    glm::mat4 rotationMatrix = rotationZ * rotationY * rotationX;
+    return transform(rotationMatrix);
 }
 
-Graph Graph::union_graph(std::vector<Graph> graphs) {
+Graph* Graph::transform(glm::mat4 transformation) {
+    Graph* ret = new Graph();
 
+    // store the relation between old and new vertex
+    std::unordered_map<Vertex*, Vertex*> vertexMap;
+    for (auto v : vertices) {
+        glm::vec3 newPos = glm::vec3(transformation * glm::vec4(v->getPos(), 1.0f));
+        glm::vec3 newNormal = glm::normalize(glm::vec3(transformation * glm::vec4(v->getNormals(), 0.0f)));
+        Vertex* newVertex = new Vertex(newPos);
+        newVertex->setNormal(newNormal);
+        vertexMap[v] = newVertex;
+        ret->addVertex(newVertex);
+    }
+
+    for (auto e : edges) {
+        Edge* newEdge = new Edge(vertexMap[e->getSrc()], vertexMap[e->getDes()]);
+        ret->addEdge(newEdge);
+    }
+
+    for (auto f : faces) {
+        Face* newFace = new Face(vertexMap[f->getVertices()[0]], vertexMap[f->getVertices()[1]], vertexMap[f->getVertices()[2]]);
+        ret->addFace(newFace);
+        for (int i = 0; i < 3; i++) {
+            vertexMap[f->getVertices()[i]]->addFace(newFace);
+        }
+    }
+
+    return ret;
+}
+
+// union the given list of Graph and return a new Graph
+Graph* Graph::union_graph(std::vector<Graph*>& graphs) {
+    Graph* ret = new Graph();
+    std::unordered_map<glm::vec3, Vertex*, Vec3Hash, Vec3Equal> vertexMap;
+
+    for (auto g : graphs) {
+        for (auto v : g->getVertices()) {
+            if (vertexMap[v->getPos()]) {
+                continue;
+            }
+            else {
+                Vertex* newVertex = new Vertex(v->getPos());
+                ret->addVertex(newVertex);
+                vertexMap[v->getPos()] = newVertex;
+            }
+        }
+        for (auto e : g->getEdges()) {
+            ret->addEdge(new Edge(vertexMap[e->getSrc()->getPos()], vertexMap[e->getDes()->getPos()]));
+        }
+        for (auto f : g->getFaces()) {
+            Face* newFace = new Face(
+                vertexMap[f->getVertices()[0]->getPos()],
+                vertexMap[f->getVertices()[1]->getPos()],
+                vertexMap[f->getVertices()[2]->getPos()]
+            );
+            ret->addFace(newFace);
+            for (int i = 0; i < 3; i++) {
+                vertexMap[f->getVertices()[i]->getPos()]->addFace(newFace);
+            }
+        }
+    }
+    ret->calculateVertexNormal();
+    return ret;
 }
