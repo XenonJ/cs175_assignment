@@ -60,8 +60,12 @@ void Graph::clear() {
 void Graph::calculateVertexNormal() {
     for (auto v : vertices) {
         glm::vec3 normal(0.0f, 0.0f, 0.0f);
+        std::unordered_map<glm::vec3, bool, Vec3Hash, Vec3Equal> mp;
         for (auto f : v->getFaces()) {
-            normal += f->getFaceNormal();
+            if (!mp[f->getFaceNormal()]) {
+                normal += f->getFaceNormal();
+                mp[f->getFaceNormal()] = true;
+            }
         }
         normal = glm::normalize(normal);
         v->setNormal(normal);
