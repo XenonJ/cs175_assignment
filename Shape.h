@@ -27,7 +27,7 @@ public:
     static int m_segmentsY;
 
     Shape() { setSegments(10, 10); };
-    ~Shape(){};
+    ~Shape(){for (auto g : graphs) { delete g; }};
 
     void setSegments(int segX, int segY) {
         m_segmentsX = segX;
@@ -44,7 +44,7 @@ public:
 
 protected:
 
-    std::vector<Graph> graphs;
+    std::vector<Graph*> graphs;
 
     void normalizeNormal(float x, float y, float z) { normalizeNormal(glm::vec3(x, y, z)); };
 

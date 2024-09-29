@@ -5,7 +5,6 @@
 
 static std::vector<Vertex> vertices;
 static std::vector<Face>   Faces;
-static std::vector<Graph*> graphList;
 
 float radius = 0.5f;
 
@@ -34,7 +33,7 @@ void Cylinder::drawTriangleMeshFromFaces(){
     // Draw side face
     glBegin(GL_TRIANGLES);
 
-    for (Graph* g : graphList){
+    for (Graph* g : this->graphs){
         g->calculateVertexNormal();
         for (Face* face : g->getFaces()) {
                 Vertex* const* verts = face->getVertices();
@@ -108,7 +107,7 @@ void Cylinder::drawNormal() {
     glColor3f(1.0f, .0f, .0f);
 
     glBegin(GL_LINES);
-    for (Graph* g : graphList){
+    for (Graph* g : this->graphs){
         for (Vertex *v : g->getVertices()){
             const glm::vec3 &normal = v->getNormals();
             const glm::vec3 &pos = (v->getPos());
@@ -127,7 +126,7 @@ void Cylinder::calculate() {
     Graph* topFace = new Graph();
     Graph* bottomFace = new Graph();
 
-    graphList.clear();
+    this->graphs.clear();
 
     float stepAngle = 360.0f / m_segmentsX; 
     float stepY = 1.0f / m_segmentsY;      
@@ -270,13 +269,13 @@ void Cylinder::calculate() {
 
 
     // Push the graph to STL for managing
-    graphList.push_back(side);
-    graphList.push_back(topFace);
-    graphList.push_back(bottomFace);
+    this->graphs.push_back(side);
+    this->graphs.push_back(topFace);
+    this->graphs.push_back(bottomFace);
     
     // Print total size
     int verticesSize = 0, facesSize = 0;
-    for (Graph* g : graphList)
+    for (Graph* g : this->graphs)
     {   
         verticesSize += g->getVertices().size();
         facesSize += g->getFaces().size();
