@@ -27,6 +27,10 @@ void Cylinder::drawTriangleMeshFromFaces(){
         
     // }
 
+    // Get current mode
+    GLint shadeModel;
+    glGetIntegerv(GL_SHADE_MODEL, &shadeModel);
+
     // Draw side face
     glBegin(GL_TRIANGLES);
 
@@ -37,7 +41,15 @@ void Cylinder::drawTriangleMeshFromFaces(){
                 for (int i = 0; i < 3; i++)
                 {
                     Vertex* v = verts[i];
-                    normalizeNormal(face->getFaceNormal());
+                    if (shadeModel == GL_SMOOTH)
+                    {
+                        normalizeNormal(v->getNormals());
+                    }
+                    else if (shadeModel == GL_FLAT)
+                    {
+                        normalizeNormal(face->getFaceNormal());
+                    }
+                    
                     glm::vec3 pos = v->getPos();
                     glVertex3f(pos.x, pos.y, pos.z);
                 }
