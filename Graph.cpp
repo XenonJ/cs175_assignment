@@ -26,7 +26,10 @@ std::vector<Vertex*>& Graph::getVertices() {
 // TODO: improve speed
 Vertex* Graph::getVertexAt(glm::vec3 pos) {
     for (auto v : vertices) {
-        if (v->getPos() == pos) {
+        float epsilon = 1e-6f;
+        if ((std::fabs(v->getPos().x - pos.x) < epsilon) &&
+           (std::fabs(v->getPos().y - pos.y) < epsilon) &&
+           (std::fabs(v->getPos().z - pos.z) < epsilon) ) {
             return v;
         }
     }
