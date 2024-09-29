@@ -150,3 +150,12 @@ Graph* Graph::union_graph(std::vector<Graph*>& graphs) {
     ret->calculateVertexNormal();
     return ret;
 }
+
+int Graph::convertVec3ToInt(glm::vec3 vec) {
+    const float scale = 10000.0f;
+    int scaledX = static_cast<int>(std::round(vec.x * scale));
+    int scaledY = static_cast<int>(std::round(vec.y * scale));
+    int scaledZ = static_cast<int>(std::round(vec.z * scale));
+
+    return (scaledX * 100000000) + (scaledY * 10000) + scaledZ;
+}

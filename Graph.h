@@ -10,15 +10,6 @@ class Vertex;
 class Edge;
 class Face;
 
-int convertVec3ToInt(glm::vec3 vec) {
-    const float scale = 10000.0f;
-    int scaledX = static_cast<int>(std::round(vec.x * scale));
-    int scaledY = static_cast<int>(std::round(vec.y * scale));
-    int scaledZ = static_cast<int>(std::round(vec.z * scale));
-
-    return (scaledX * 100000000) + (scaledY * 10000) + scaledZ;
-}
-
 class Vertex {
 private:
     glm::vec3 position;
@@ -86,6 +77,7 @@ public:
     Graph* rotate(float angle_x, float angle_y, float angle_z);
     Graph* transform(glm::mat4 transformation);
     static Graph* union_graph(std::vector<Graph*>& graphs);
+    static int convertVec3ToInt(glm::vec3 vec);
     // void drawTriangleMeshFromFaces();
     // void drawNormalsFromFaces();
 };
