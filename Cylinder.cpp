@@ -37,7 +37,7 @@ void Cylinder::drawTriangleMeshFromFaces(){
                 for (int i = 0; i < 3; i++)
                 {
                     Vertex* v = verts[i];
-                    normalizeNormal(v->getNormals());
+                    normalizeNormal(face->getFaceNormal());
                     glm::vec3 pos = v->getPos();
                     glVertex3f(pos.x, pos.y, pos.z);
                 }
