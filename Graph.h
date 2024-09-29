@@ -10,23 +10,14 @@ class Vertex;
 class Edge;
 class Face;
 
-struct Vec3Hash {
-    std::size_t operator()(const glm::vec3& v) const {
-        std::size_t h1 = std::hash<float>()(v.x);
-        std::size_t h2 = std::hash<float>()(v.y);
-        std::size_t h3 = std::hash<float>()(v.z);
-        return h1 ^ (h2 << 1) ^ (h3 << 2); // Combine the hash values
-    }
-};
+int convertVec3ToInt(glm::vec3 vec) {
+    const float scale = 10000.0f;
+    int scaledX = static_cast<int>(std::round(vec.x * scale));
+    int scaledY = static_cast<int>(std::round(vec.y * scale));
+    int scaledZ = static_cast<int>(std::round(vec.z * scale));
 
-struct Vec3Equal {
-    bool operator()(const glm::vec3& v1, const glm::vec3& v2) const {
-        float epsilon = 0.1f;
-        return (std::fabs(v1.x - v2.x) < epsilon) &&
-           (std::fabs(v1.y - v2.y) < epsilon) &&
-           (std::fabs(v1.z - v2.z) < epsilon);
-    }
-};
+    return (scaledX * 100000000) + (scaledY * 10000) + scaledZ;
+}
 
 class Vertex {
 private:

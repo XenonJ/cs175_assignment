@@ -63,11 +63,11 @@ void Graph::clear() {
 void Graph::calculateVertexNormal() {
     for (auto v : vertices) {
         glm::vec3 normal(0.0f, 0.0f, 0.0f);
-        std::unordered_map<glm::vec3, bool, Vec3Hash, Vec3Equal> mp;
+        std::unordered_map<int, bool> mp;
         for (auto f : v->getFaces()) {
-            if (!mp[f->getFaceNormal()]) {
+            if (!mp[convertVec3ToInt(f->getFaceNormal())]) {
                 normal += f->getFaceNormal();
-                mp[f->getFaceNormal()] = true;
+                mp[convertVec3ToInt(f->getFaceNormal())] = true;
             }
         }
         normal = glm::normalize(normal);
@@ -118,31 +118,32 @@ Graph* Graph::transform(glm::mat4 transformation) {
 // union the given list of Graph and return a new Graph
 Graph* Graph::union_graph(std::vector<Graph*>& graphs) {
     Graph* ret = new Graph();
-    std::unordered_map<glm::vec3, Vertex*, Vec3Hash, Vec3Equal> vertexMap;
+    std::unordered_map<int, Vertex*> vertexMap;
 
     for (auto g : graphs) {
         for (auto v : g->getVertices()) {
-            if (vertexMap[v->getPos()]) {
+            if (vertexMap.find(convertVec3ToInt(v->getPos())) != vertexMap.end()) {
                 continue;
             }
             else {
                 Vertex* newVertex = new Vertex(v->getPos());
                 ret->addVertex(newVertex);
-                vertexMap[v->getPos()] = newVertex;
+                vertexMap[convertVec3ToInt(v->getPos())] = newVertex;
+                std::cout << "1" << std::endl;
             }
         }
         for (auto e : g->getEdges()) {
-            ret->addEdge(new Edge(vertexMap[e->getSrc()->getPos()], vertexMap[e->getDes()->getPos()]));
+            ret->addEdge(new Edge(vertexMap[convertVec3ToInt(e->getSrc()->getPos())], vertexMap[convertVec3ToInt(e->getDes()->getPos())]));
         }
         for (auto f : g->getFaces()) {
             Face* newFace = new Face(
-                vertexMap[f->getVertices()[0]->getPos()],
-                vertexMap[f->getVertices()[1]->getPos()],
-                vertexMap[f->getVertices()[2]->getPos()]
+                vertexMap[convertVec3ToInt(f->getVertices()[0]->getPos())],
+                vertexMap[convertVec3ToInt(f->getVertices()[1]->getPos())],
+                vertexMap[convertVec3ToInt(f->getVertices()[2]->getPos())]
             );
             ret->addFace(newFace);
             for (int i = 0; i < 3; i++) {
-                vertexMap[f->getVertices()[i]->getPos()]->addFace(newFace);
+                vertexMap[convertVec3ToInt(f->getVertices()[i]->getPos())]->addFace(newFace);
             }
         }
     }
