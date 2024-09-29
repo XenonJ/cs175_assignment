@@ -116,11 +116,11 @@ void Cone::calculate() {
     {
         float rate = i * stepY;
         // left bottom
-        float x1 = rate * radius * glm::cos((m_segmentsY - i) * angle);
-        float z1 = rate * radius * glm::sin((m_segmentsY - i) * angle); 
+        float x1 = rate * radius * glm::cos(0);
+        float z1 = rate * radius * glm::sin(0); 
         // Right bottom
-        float x2 = rate * radius * glm::cos((m_segmentsY - i + 1) * angle);
-        float z2 = rate * radius * glm::sin((m_segmentsY - i + 1) * angle);
+        float x2 = rate * radius * glm::cos(angle);
+        float z2 = rate * radius * glm::sin(angle);
 
         float y = radius - i * stepY;
         glm::vec3 position1(x1, y, z1);
@@ -163,8 +163,8 @@ void Cone::calculate() {
         int index3 = (j + 1) * 2;
         int index4 = index3 + 1;
 
-        Face* f1 = new Face(tempVerts[index1], tempVerts[index3], tempVerts[index2]);
-        Face* f2 = new Face(tempVerts[index2], tempVerts[index3], tempVerts[index4]);
+        Face* f1 = new Face(tempVerts[index1], tempVerts[index3], tempVerts[index4]);
+        Face* f2 = new Face(tempVerts[index4], tempVerts[index2], tempVerts[index1]);
 
         side->addFace(f1);
         side->addFace(f2);
