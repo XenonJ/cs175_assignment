@@ -23,8 +23,6 @@ public:
 
 	void drawTriangleMeshFromFaces();
 
-	void drawNormalsFromFaces();
-
 
 private:
 };

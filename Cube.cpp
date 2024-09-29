@@ -7,149 +7,76 @@
 static std::vector<Vertex> vertices;
 static std::vector<Face>   Faces;
 
+
 void Cube::drawTriangleMeshFromFaces() {
+    // Get current mode
+    GLint shadeModel;
+    glGetIntegerv(GL_SHADE_MODEL, &shadeModel);
+
+    // Draw side face
     glBegin(GL_TRIANGLES);
-    for (Face &face : Faces) {
-        Vertex *const *verts = face.getVertices();
 
-        for (int i = 0; i < 3; ++i) {
-            const glm::vec3 &pos = verts[i]->getPos();
-            glVertex3f(pos.x, pos.y, pos.z);
+    for (Graph* g : this->graphs) {
+        g->calculateVertexNormal();
+        for (Face* face : g->getFaces()) {
+            Vertex* const* verts = face->getVertices();
+            for (int i = 0; i < 3; i++)
+            {
+                Vertex* v = verts[i];
+                if (shadeModel == GL_SMOOTH)
+                {
+                    normalizeNormal(v->getNormals());
+                }
+                else if (shadeModel == GL_FLAT)
+                {
+                    normalizeNormal(face->getFaceNormal());
+                }
+
+                glm::vec3 pos = v->getPos();
+                glVertex3f(pos.x, pos.y, pos.z);
+            }
         }
     }
     glEnd();
-}
 
-void Cube::drawNormalsFromFaces() {
-
-    glColor3f(1.0f, .0f, .0f);
-    glBegin(GL_LINES);
-    for (Face &face : Faces) {
-        Vertex *const *verts      = face.getVertices();
-        glm::vec3      v0Pos      = verts[0]->getPos();
-        glm::vec3      v1Pos      = verts[1]->getPos();
-        glm::vec3      v2Pos      = verts[2]->getPos();
-        glm::vec3      v1v0       = glm::normalize(v1Pos - v0Pos);
-        glm::vec3      v2v0       = glm::normalize(v2Pos - v0Pos);
-        glm::vec3      faceNormal = glm::normalize(glm::cross(v1v0, v2v0));
-
-        for (int i = 0; i < 3; ++i) {
-            const glm::vec3 &pos = (verts[i]->getPos());
-            glVertex3f(pos.x, pos.y, pos.z);
-            glVertex3f(pos.x + faceNormal.x * .1f, pos.y + faceNormal.y * .1f,
-                       pos.z + faceNormal.z * .1f);
-        }
-    }
-    glEnd();
 }
 
 void Cube::draw() {
-    // std::cout << "This function was called!" << std::endl;
-    // printf("This function was called!");
-    // calculate();
-    // printf("%\n", vertices.size());
-    // printf("%\n", Faces.size());
-
-    glPushMatrix();
-    glTranslatef(-0.5f, -0.5f, 0.5f);
-
     drawTriangleMeshFromFaces();
-
-    glPushMatrix();
-    glTranslatef(0.0f, 1.0f, 0.0f);   // Move to Y=1
-    glRotatef(-90, 1.0f, 0.0f, 0.0f); // rotate by X -90
-    drawTriangleMeshFromFaces();
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(0.0f, 0.0f, -1.0f);  // Move to Z=-1
-    glRotatef(-90, 0.0f, 1.0f, 0.0f); // rotate by Y -90
-    drawTriangleMeshFromFaces();
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(1.0f, 0.0f, 0.0f);  // Move to X=1
-    glRotatef(90, 0.0f, 1.0f, 0.0f); // rotate by Y 90
-    drawTriangleMeshFromFaces();
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(0.0f, 0.0f, -1.0f); // Move to Z=-1
-    glRotatef(90, 1.0f, 0.0f, 0.0f); // rotate by X 90
-    drawTriangleMeshFromFaces();
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(0.0f, 1.0f, 0.0f);   // Move to Y=1
-    glTranslatef(0.0f, 0.0f, -1.0f);  // Move to Z=-1
-    glRotatef(180, 1.0f, 0.0f, 0.0f); // rotate by X 180
-    drawTriangleMeshFromFaces();
-    glPopMatrix();
-
-    glPopMatrix();
 }
 
 void Cube::drawNormal() {
+    glColor3f(1.0f, .0f, .0f);
 
-    glPushMatrix();
-    glTranslatef(-0.5f, -0.5f, 0.5f);
+    glBegin(GL_LINES);
+    for (Graph* g : this->graphs) {
+        for (Vertex* v : g->getVertices()) {
+            const glm::vec3& normal = v->getNormals();
+            const glm::vec3& pos = (v->getPos());
 
-    drawNormalsFromFaces();
-
-    glPushMatrix();
-    glTranslatef(0.0f, 1.0f, 0.0f);   // Move to Y=1
-    glRotatef(-90, 1.0f, 0.0f, 0.0f); // rotate by X -90
-    drawNormalsFromFaces();
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(0.0f, 0.0f, -1.0f);  // Move to Z=-1
-    glRotatef(-90, 0.0f, 1.0f, 0.0f); // rotate by Y -90
-    drawNormalsFromFaces();
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(1.0f, 0.0f, 0.0f);  // Move to X=1
-    glRotatef(90, 0.0f, 1.0f, 0.0f); // rotate by Y 90
-    drawNormalsFromFaces();
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(0.0f, 0.0f, -1.0f); // Move to Z=-1
-    glRotatef(90, 1.0f, 0.0f, 0.0f); // rotate by X 90
-    drawNormalsFromFaces();
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(0.0f, 1.0f, 0.0f);   // Move to Y=1
-    glTranslatef(0.0f, 0.0f, -1.0f);  // Move to Z=-1
-    glRotatef(180, 1.0f, 0.0f, 0.0f); // rotate by X 180
-    drawNormalsFromFaces();
-    glPopMatrix();
-
-    glPopMatrix();
+            glVertex3f(pos.x, pos.y, pos.z);
+            glVertex3f(pos.x + normal.x * .1f, pos.y + normal.y * .1f,
+                pos.z + normal.z * .1f);
+        }
+    }
+    glEnd();
 }
 
 void Cube::calculate() {
 
-    // for (int n = 0; n < 6; n++){
+    Graph* g = new Graph();
 
-    // graphs[n].clear();
     float stepX = 1.0f / m_segmentsX;
     float stepY = 1.0f / m_segmentsY;
-
-    this->vertices.clear();
-    this->Faces.clear();
 
     // Calculate all vertices
     for (int i = 0; i <= m_segmentsX; i++) {
         for (int j = 0; j <= m_segmentsY; j++) {
-            float x = i * stepX;
-            float y = j * stepY;
+            float x = i * stepX - 0.5f;
+            float y = j * stepY - 0.5f;
             float z = 0.0f;
 
-            // Vertex vertex = new Vertex(glm::vec3(x, y, z));
-            this->vertices.emplace_back(glm::vec3(x, y, z));
+            g->addVertex(new Vertex(glm::vec3(x, y, z)));
         }
     }
 
@@ -161,13 +88,30 @@ void Cube::calculate() {
             int index3 = (i + 1) * (m_segmentsY + 1) + j;
             int index4 = index3 + 1;
 
-            this->Faces.emplace_back(&vertices[index1], &vertices[index3],
-                               &vertices[index4]);
-            this->Faces.emplace_back(&vertices[index1], &vertices[index4],
-                               &vertices[index2]);
+            auto vertices = g->getVertices();
+            g->addFace(new Face(vertices[index1], vertices[index3], vertices[index4]));
+            g->addFace(new Face(vertices[index1], vertices[index4], vertices[index2]));
         }
 
         std::cout << "Vertices count: " << vertices.size() << std::endl;
         std::cout << "Faces count: " << Faces.size() << std::endl;
+    }
+
+    glm::mat4 Matrics[6];
+    Matrics[0] = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.5f));
+    Matrics[1] = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -0.5f)) *
+            glm::rotate(glm::mat4(1.0f), glm::radians(180.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    Matrics[2] = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0.0f)) *
+            glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    Matrics[3] = glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.0f, 0.0f)) *
+            glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    Matrics[4] = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.5f, 0.0f)) *
+            glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    Matrics[5] = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, 0.0f)) *
+            glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+    this->graphs.clear();
+    for (int i = 0; i < 6; i++) {
+        this->graphs.push_back(g->transform(Matrics[i]));
     }
 }
