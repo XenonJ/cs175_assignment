@@ -31,6 +31,7 @@ void Cylinder::drawTriangleMeshFromFaces(){
     glBegin(GL_TRIANGLES);
 
     for (Graph* g : graphList){
+        g->calculateVertexNormal();
         for (Face* face : g->getFaces()) {
                 Vertex* const* verts = face->getVertices();
                 for (int i = 0; i < 3; i++)
@@ -133,11 +134,16 @@ void Cylinder::calculate() {
 
             glm::vec3 position(x, y, z);
             // Calculate normal
-            glm::vec3 normal = glm::normalize(glm::vec3(x, 0.0f, z)); 
+            glm::vec3 normal = glm::vec3(x, 0.0f, z); 
 
             // Build vertex with position and normal
             Vertex* v = new Vertex(position);
-            v->setNormal(normal); 
+
+
+            // v->setNormal(normal); 
+
+
+            
             // this->vertices.emplace_back(v);
             side->addVertex(v);
             // this->vertices.emplace_back(glm::vec3(x, y, z));
