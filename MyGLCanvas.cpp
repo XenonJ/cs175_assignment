@@ -47,7 +47,7 @@ void MyGLCanvas::setShape(OBJ_TYPE type) {
         break;
     default: shape = cube;
     }
-
+    shape->calculate();
     printf("set shape to: %d\n", type);
 }
 

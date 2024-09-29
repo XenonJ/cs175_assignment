@@ -92,6 +92,8 @@ public:
     Graph* rotate(float angle_x, float angle_y, float angle_z);
     Graph* transform(glm::mat4 transformation);
     static Graph* union_graph(std::vector<Graph*>& graphs);
+    // void drawTriangleMeshFromFaces();
+    // void drawNormalsFromFaces();
 };
 
 #endif

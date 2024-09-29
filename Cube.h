@@ -11,6 +11,9 @@ public:
 	OBJ_TYPE getType() {
 		return SHAPE_CUBE;
 	}
+	
+	std::vector<Vertex> vertices;
+	std::vector<Face>   Faces;
 
 	void draw();
 
@@ -19,7 +22,12 @@ public:
 
 	void calculate();
 
+	void drawTriangleMeshFromFaces();
+	
+	void drawNormalsFromFaces();
+
 private:
+	
 };
 
 #endif

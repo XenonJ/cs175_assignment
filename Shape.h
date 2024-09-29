@@ -39,6 +39,8 @@ public:
     virtual void     draw(){};
     virtual void     drawNormal(){};
     virtual void     calculate(){};
+    virtual void     drawTriangleMeshFromFaces(){};
+    virtual void     drawNormalsFromFaces(){};
 
 protected:
 

@@ -4,10 +4,10 @@
 
 // using namespace std;
 
-std::vector<Vertex> vertices;
-std::vector<Face>   Faces;
+static std::vector<Vertex> vertices;
+static std::vector<Face>   Faces;
 
-void drawTriangleMeshFromFaces() {
+void Cube::drawTriangleMeshFromFaces() {
     glBegin(GL_TRIANGLES);
     for (Face &face : Faces) {
         Vertex *const *verts = face.getVertices();
@@ -20,7 +20,7 @@ void drawTriangleMeshFromFaces() {
     glEnd();
 }
 
-void drawNormalsFromFaces() {
+void Cube::drawNormalsFromFaces() {
 
     glColor3f(1.0f, .0f, .0f);
     glBegin(GL_LINES);
@@ -138,8 +138,8 @@ void Cube::calculate() {
     float stepX = 1.0f / m_segmentsX;
     float stepY = 1.0f / m_segmentsY;
 
-    vertices.clear();
-    Faces.clear();
+    this->vertices.clear();
+    this->Faces.clear();
 
     // Calculate all vertices
     for (int i = 0; i <= m_segmentsX; i++) {
@@ -149,7 +149,7 @@ void Cube::calculate() {
             float z = 0.0f;
 
             // Vertex vertex = new Vertex(glm::vec3(x, y, z));
-            vertices.emplace_back(glm::vec3(x, y, z));
+            this->vertices.emplace_back(glm::vec3(x, y, z));
         }
     }
 
@@ -161,9 +161,9 @@ void Cube::calculate() {
             int index3 = (i + 1) * (m_segmentsY + 1) + j;
             int index4 = index3 + 1;
 
-            Faces.emplace_back(&vertices[index1], &vertices[index3],
+            this->Faces.emplace_back(&vertices[index1], &vertices[index3],
                                &vertices[index4]);
-            Faces.emplace_back(&vertices[index1], &vertices[index4],
+            this->Faces.emplace_back(&vertices[index1], &vertices[index4],
                                &vertices[index2]);
         }
 

@@ -11,13 +11,19 @@ public:
 	OBJ_TYPE getType() {
 		return SHAPE_CYLINDER;
 	}
+	
+	std::vector<Vertex> vertices;
+	std::vector<Face>   Faces;
 
+	void draw();
 
-	void draw() {
-	};
+	void drawNormal();
 
-	void drawNormal() {
-	};
+	void calculate();
+
+	void drawTriangleMeshFromFaces();
+
+	void drawNormalsFromFaces();
 
 
 private:
