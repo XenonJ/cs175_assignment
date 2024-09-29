@@ -21,7 +21,10 @@ struct Vec3Hash {
 
 struct Vec3Equal {
     bool operator()(const glm::vec3& v1, const glm::vec3& v2) const {
-        return v1 == v2; // Use glm's operator==
+        float epsilon = 1e-6f;
+        return (std::fabs(v1.x - v2.x) < epsilon) &&
+           (std::fabs(v1.y - v2.y) < epsilon) &&
+           (std::fabs(v1.z - v2.z) < epsilon);
     }
 };
 
