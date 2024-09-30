@@ -131,7 +131,7 @@ void Special1::calculate() {
     }
 
     glm::vec3 topPosition(0.0f, 0.0f, 0.7f);
-    glm::vec3 bottomPosition(0.0f, 0.0f, 0.7f);
+    glm::vec3 bottomPosition(0.0f, 0.0f, -0.7f);
     Vertex* topv = new Vertex(topPosition);
     Vertex* bottomv = new Vertex(bottomPosition);
 
