@@ -142,6 +142,7 @@ void MyGLCanvas::drawScene() {
         glEnable(GL_POLYGON_OFFSET_FILL);
         glColor3f(0.5, 0.5, 0.5);
         glPolygonMode(GL_FRONT, GL_FILL);
+        glPolygonMode(GL_BACK, GL_LINE);
         shape->draw();
     }
 
