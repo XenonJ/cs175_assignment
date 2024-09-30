@@ -129,7 +129,6 @@ Graph* Graph::union_graph(std::vector<Graph*>& graphs) {
                 Vertex* newVertex = new Vertex(v->getPos());
                 ret->addVertex(newVertex);
                 vertexMap[convertVec3ToInt(v->getPos())] = newVertex;
-                std::cout << "1" << std::endl;
             }
         }
         for (auto e : g->getEdges()) {
