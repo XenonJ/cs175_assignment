@@ -12,12 +12,15 @@ public:
 		return SHAPE_SPHERE;
 	}
 
-	void draw() {
-	};
+	void draw();
 
-	void drawNormal() {
-	};
+	void drawNormal();
 
+	void calculate();
+
+	void drawTriangleMeshFromFaces();
+
+	void drawNormalsFromFaces();
 private:
 };
 
