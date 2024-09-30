@@ -95,7 +95,7 @@ void Sphere::calculate() {
     //  Create a new graph to store the sphere surface
     Graph* sphere = new Graph();
 
-    this->graphs.clear();
+    this->clearGraphs();
 
     float stepLongitude = 360.0f / m_segmentsX;  // Longitude angle
     float stepLatitude = 180.0f / m_segmentsY;   // Latitude angle

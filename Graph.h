@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <unordered_map>
+#include <iostream>
 
 class Vertex;
 class Edge;
@@ -64,7 +65,7 @@ private:
     std::vector<Face*> faces;
 public:
     Graph() { };
-    ~Graph() { clear(); };
+    ~Graph() { clear(); std::cout << "graph deleted" << std::endl; };
     void addVertex(Vertex* v);
     void addEdge(Edge* e);
     void addFace(Face* f);

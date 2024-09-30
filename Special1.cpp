@@ -97,7 +97,7 @@ void Special1::calculate() {
     Graph* frontHeart= new Graph();
     Graph* backHeart = new Graph();
 
-    this->graphs.clear();
+    this->clearGraphs();
 
     float stepAngleX = 360.0f / m_segmentsX;  // Step along X axis
     float stepZ = 2.0f / m_segmentsY;         // Step along Z axis (heart height)

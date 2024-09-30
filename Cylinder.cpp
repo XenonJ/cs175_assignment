@@ -65,7 +65,7 @@ void Cylinder::calculate() {
     Graph* topFace = new Graph();
     Graph* bottomFace = new Graph();
 
-    this->graphs.clear();
+    this->clearGraphs();
 
     float stepAngle = 360.0f / m_segmentsX;
     float stepY = 1.0f / m_segmentsY;

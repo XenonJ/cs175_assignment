@@ -92,9 +92,6 @@ void Cube::calculate() {
             g->addFace(new Face(vertices[index1], vertices[index3], vertices[index4]));
             g->addFace(new Face(vertices[index1], vertices[index4], vertices[index2]));
         }
-
-        std::cout << "Vertices count: " << vertices.size() << std::endl;
-        std::cout << "Faces count: " << Faces.size() << std::endl;
     }
 
     glm::mat4 Matrics[6];
@@ -110,8 +107,9 @@ void Cube::calculate() {
     Matrics[5] = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, 0.0f)) *
             glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
-    this->graphs.clear();
+    this->clearGraphs();
     for (int i = 0; i < 6; i++) {
         this->graphs.push_back(g->transform(Matrics[i]));
     }
+    delete g;
 }
