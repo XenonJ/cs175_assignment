@@ -15,6 +15,8 @@
 #include "Cylinder.h"
 #include "Shape.h"
 #include "Sphere.h"
+#include "Special1.h"
+
 //#include "Torus.h"
 
 
@@ -35,6 +37,7 @@ public:
     Cylinder *cylinder;
     Cone     *cone;
     Sphere   *sphere;
+    Special1 *special1;
     // Torus* torus;
     Shape *shape;
 

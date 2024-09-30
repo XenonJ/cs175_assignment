@@ -7,7 +7,7 @@ LDFLAGS   = $(shell fltk-config --ldflags --use-gl --use-images) -L$(BREWPATH)/l
    
 POSTBUILD = fltk-config --post # build .app folder for osx. (does nothing on pc)
 
-$(ASSIGN): % : main.o MyGLCanvas.o Cube.o  Cylinder.o Cone.o Sphere.o Graph.o
+$(ASSIGN): % : main.o MyGLCanvas.o Cube.o  Cylinder.o Cone.o Sphere.o Graph.o Special1.o
 	$(CXX) $(LDFLAGS) $^ -o $@
 	$(POSTBUILD) $@
 
