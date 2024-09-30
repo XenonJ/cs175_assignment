@@ -119,12 +119,12 @@ void Special1::calculate() {
             // Back(z = -1)
             if (i == 0)
             {
-                backHeart->addVertex(v);
+                backHeart->addVertex(new Vertex(v->getPos()));
             }
             // Front(z = 1)
             else if (i == m_segmentsY)
             {
-                frontHeart->addVertex(v);
+                frontHeart->addVertex(new Vertex(v->getPos()));
             }
             
         }
