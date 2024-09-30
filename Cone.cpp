@@ -96,7 +96,7 @@ void Cone::calculate() {
     Graph* side = new Graph();
     Graph* bottom = new Graph();
 
-    this->graphs.clear();
+    this->clearGraphs();
 
     float stepAngle = 360.0f / m_segmentsX; 
     float stepY = 1.0f / m_segmentsY;      

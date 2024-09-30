@@ -35,6 +35,13 @@ public:
         calculate();
     }
 
+    void clearGraphs() {
+        for (auto g : this->graphs) {
+            delete g;
+        }
+        this->graphs.clear();
+    }
+
     virtual OBJ_TYPE getType() = 0;
     virtual void     draw(){};
     virtual void     drawNormal(){};
