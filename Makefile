@@ -1,4 +1,4 @@
-ASSIGN    = a1
+ASSIGN    = a2
 
 BREWPATH  = $(shell brew --prefix)
 CXX       = $(shell fltk-config --cxx) -std=c++11 -D_CRT_SECURE_NO_WARNINGS -DGL_SILENCE_DEPRECATION -Wno-macro-redefined -g -arch arm64
