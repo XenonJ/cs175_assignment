@@ -65,7 +65,7 @@ private:
     std::vector<Face*> faces;
 public:
     Graph() { };
-    ~Graph() { clear(); std::cout << "graph deleted" << std::endl; };
+    ~Graph() { clear(); };
     void addVertex(Vertex* v);
     void addEdge(Edge* e);
     void addFace(Face* f);

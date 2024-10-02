@@ -11,14 +11,15 @@
 #define PI glm::pi<float>() // PI is now a constant for 3.14159....
 
 enum OBJ_TYPE {
-    SHAPE_CUBE     = 0,
+    SHAPE_CUBE = 0,
     SHAPE_CYLINDER = 1,
-    SHAPE_CONE     = 2,
-    SHAPE_SPHERE   = 3,
+    SHAPE_CONE = 2,
+    SHAPE_SPHERE = 3,
     SHAPE_SPECIAL1 = 4,
     SHAPE_SPECIAL2 = 5,
     SHAPE_SPECIAL3 = 6,
-    SHAPE_MESH     = 7
+    SHAPE_MESH = 7,
+    SHAPE_SCENE = 8
 };
 
 class Shape {
@@ -27,7 +28,7 @@ public:
     static int m_segmentsY;
 
     Shape() { setSegments(10, 10); };
-    ~Shape(){for (auto g : graphs) { delete g; }};
+    ~Shape() { for (auto g : graphs) { delete g; } };
 
     void setSegments(int segX, int segY) {
         m_segmentsX = segX;
@@ -43,11 +44,11 @@ public:
     }
 
     virtual OBJ_TYPE getType() = 0;
-    virtual void     draw(){};
-    virtual void     drawNormal(){};
-    virtual void     calculate(){};
-    virtual void     drawTriangleMeshFromFaces(){};
-    virtual void     drawNormalsFromFaces(){};
+    virtual void     draw() {};
+    virtual void     drawNormal() {};
+    virtual void     calculate() {};
+    virtual void     drawTriangleMeshFromFaces() {};
+    virtual void     drawNormalsFromFaces() {};
 
 protected:
 
