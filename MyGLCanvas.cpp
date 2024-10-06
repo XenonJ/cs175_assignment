@@ -79,7 +79,7 @@ void MyGLCanvas::renderShape(OBJ_TYPE type) {
         shape = sphere;
         break;
     case SHAPE_SPECIAL1:
-        shape = cube;
+        shape = special1;
         break;
     default:
         shape = cube;
@@ -212,27 +212,31 @@ void MyGLCanvas::drawObject(OBJ_TYPE type) {
 
 void MyGLCanvas::drawWireframe(SceneNode* node, glm::mat4 parentTransform){
     glm::mat4 currentTransform = parentTransform;
+    glPushMatrix();
 
-    for (SceneTransformation* transform : node->transformations){
-        switch (transform->type)
-        {
-            case TRANSFORMATION_TRANSLATE:
-                currentTransform = glm::translate(currentTransform, transform->translate);
-                break;
+    for (SceneTransformation* transform : node->transformations) {
+        switch (transform->type) {
             case TRANSFORMATION_SCALE:
-                currentTransform = glm::scale(currentTransform, transform->scale);
+                // glm::scale(currentTransform, transform->scale);
+                glScalef(transform->scale.x, transform->scale.y, transform->scale.z);
                 break;
             case TRANSFORMATION_ROTATE:
-                currentTransform = glm::rotate(currentTransform, glm::radians(transform->angle), transform->rotate);
+                // glm::rotate(currentTransform, transform->angle, transform->rotate);
+                glRotatef(glm::degrees(transform->angle), transform->rotate.x, transform->rotate.y, transform->rotate.z);
+                break;
+            case TRANSFORMATION_TRANSLATE:
+                // glm::translate(currentTransform, transform->translate);
+                glTranslatef(transform->translate.x, transform->translate.y, transform->translate.z);
                 break;
             case TRANSFORMATION_MATRIX:
-                currentTransform = currentTransform * transform->matrix;
+                // currentTransform * transform->matrix;
+                glMultMatrixf(glm::value_ptr(transform->matrix));
                 break;
         }
     }
-
-    glPushMatrix();
-    glMultMatrixf(glm::value_ptr(currentTransform));
+    
+    // glLoadIdentity();
+    // glMultMatrixf(glm::value_ptr(currentTransform));
 
     // Draw current primitive
     for (ScenePrimitive* primitive : node->primitives){
@@ -243,8 +247,9 @@ void MyGLCanvas::drawWireframe(SceneNode* node, glm::mat4 parentTransform){
     for (SceneNode* child : node->children){
         drawWireframe(child, currentTransform);
     }
-
     glPopMatrix();
+
+
 }
 
 void MyGLCanvas::drawScene() {
