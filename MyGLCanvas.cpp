@@ -181,7 +181,7 @@ void MyGLCanvas::drawObject(OBJ_TYPE type) {
         glDisable(GL_LIGHT0 + i);
     }
 
-    GLfloat light_pos0[] = { 1.0, 0.5, 2.0, 0.0f };
+    GLfloat light_pos0[] = { -1.0, -0.5, -2.0, 0.0f };
     GLfloat ambient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
     GLfloat diffuse[] = { 0.9f, 0.9f, 0.9f, 1.0f };
 
@@ -210,6 +210,43 @@ void MyGLCanvas::drawObject(OBJ_TYPE type) {
     }
 }
 
+void MyGLCanvas::drawWireframe(SceneNode* node, glm::mat4 parentTransform){
+    glm::mat4 currentTransform = parentTransform;
+
+    for (SceneTransformation* transform : node->transformations){
+        switch (transform->type)
+        {
+            case TRANSFORMATION_TRANSLATE:
+                currentTransform = glm::translate(currentTransform, transform->translate);
+                break;
+            case TRANSFORMATION_SCALE:
+                currentTransform = glm::scale(currentTransform, transform->scale);
+                break;
+            case TRANSFORMATION_ROTATE:
+                currentTransform = glm::rotate(currentTransform, glm::radians(transform->angle), transform->rotate);
+                break;
+            case TRANSFORMATION_MATRIX:
+                currentTransform = currentTransform * transform->matrix;
+                break;
+        }
+    }
+
+    glPushMatrix();
+    glMultMatrixf(glm::value_ptr(currentTransform));
+
+    // Draw current primitive
+    for (ScenePrimitive* primitive : node->primitives){
+        renderShape(primitive->type);
+    }
+
+    // Draw children nodes recursively
+    for (SceneNode* child : node->children){
+        drawWireframe(child, currentTransform);
+    }
+
+    glPopMatrix();
+}
+
 void MyGLCanvas::drawScene() {
     if (parser == NULL) {
         return;
@@ -231,6 +268,7 @@ void MyGLCanvas::drawScene() {
         glDisable(GL_POLYGON_OFFSET_FILL);
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         //TODO: draw wireframe of the scene
+        drawWireframe(root, compositeMatrix);
         // note that you don't need to applyMaterial, just draw the geometry
         glEnable(GL_LIGHTING);
     }
