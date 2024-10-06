@@ -58,7 +58,7 @@ private:
 	void drawScene();
 	void drawObject(OBJ_TYPE type);
 	void drawAxis();
-	void drawWireframe(SceneNode* node, glm::mat4 parentTransform);
+	void drawWireframe(SceneNode* node, bool wireframe);
 
 	int handle(int);
 	void resize(int x, int y, int w, int h);

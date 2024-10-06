@@ -210,8 +210,8 @@ void MyGLCanvas::drawObject(OBJ_TYPE type) {
     }
 }
 
-void MyGLCanvas::drawWireframe(SceneNode* node, glm::mat4 parentTransform){
-    glm::mat4 currentTransform = parentTransform;
+void MyGLCanvas::drawWireframe(SceneNode* node, bool wireframe){
+    // glm::mat4 currentTransform = parentTransform;
     glPushMatrix();
 
     for (SceneTransformation* transform : node->transformations) {
@@ -240,12 +240,21 @@ void MyGLCanvas::drawWireframe(SceneNode* node, glm::mat4 parentTransform){
 
     // Draw current primitive
     for (ScenePrimitive* primitive : node->primitives){
-        renderShape(primitive->type);
+        // If is wire mode, just draw the shape
+        if(wireframe){
+            renderShape(primitive->type);
+        }
+        // If is fill mode, first apply the material
+        else{
+            applyMaterial(primitive->material);
+            renderShape(primitive->type);
+        }
+
     }
 
     // Draw children nodes recursively
     for (SceneNode* child : node->children){
-        drawWireframe(child, currentTransform);
+        drawWireframe(child, wireframe);
     }
     glPopMatrix();
 
@@ -273,7 +282,7 @@ void MyGLCanvas::drawScene() {
         glDisable(GL_POLYGON_OFFSET_FILL);
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         //TODO: draw wireframe of the scene
-        drawWireframe(root, compositeMatrix);
+        drawWireframe(root, true);
         // note that you don't need to applyMaterial, just draw the geometry
         glEnable(GL_LIGHTING);
     }
@@ -291,8 +300,11 @@ void MyGLCanvas::drawScene() {
     if (fill == 1) {
         glEnable(GL_POLYGON_OFFSET_FILL);
         glPolygonMode(GL_FRONT, GL_FILL);
-        glPolygonMode(GL_BACK, GL_LINE);
+        glPolygonMode(GL_BACK, GL_FILL);
+
+        // glPolygonMode(GL_BACK, GL_LINE);
         //TODO: render the scene
+        drawWireframe(root, false);
         // note that you should always applyMaterial first before drawing each geometry
     }
     glDisable(GL_LIGHTING);
