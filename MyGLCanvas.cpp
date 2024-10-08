@@ -16,6 +16,7 @@ MyGLCanvas::MyGLCanvas(int x, int y, int w, int h, const char* l) : Fl_Gl_Window
     cylinder = new Cylinder();
     cone = new Cone();
     sphere = new Sphere();
+    special1 = new Special1();
     shape = cube;
 
     resetScene();
