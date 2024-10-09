@@ -6,7 +6,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
 #include <vector>
-#include "Graph.h"
+#include "Mesh.h"
 
 #define PI glm::pi<float>() // PI is now a constant for 3.14159....
 
@@ -52,7 +52,7 @@ public:
 
 protected:
 
-    std::vector<Graph*> graphs;
+    std::vector<Mesh*> graphs;
 
     void normalizeNormal(float x, float y, float z) { normalizeNormal(glm::vec3(x, y, z)); };
 

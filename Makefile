@@ -7,7 +7,7 @@ LDFLAGS   = $(shell fltk-config --ldflags --use-gl --use-images) -L$(BREWPATH)/l
    
 POSTBUILD = fltk-config --post # build .app folder for osx. (does nothing on pc)
 
-$(ASSIGN): % : main.o MyGLCanvas.o Camera.o ./scene/SceneParser.o ./scene/tinyxmlparser.o ./scene/tinyxmlerror.o ./scene/tinyxml.o ./scene/tinystr.o Cube.o Cylinder.o Cone.o Sphere.o Graph.o Special1.o
+$(ASSIGN): % : main.o MyGLCanvas.o Camera.o ./scene/SceneParser.o ./scene/tinyxmlparser.o ./scene/tinyxmlerror.o ./scene/tinyxml.o ./scene/tinystr.o Cube.o Cylinder.o Cone.o Sphere.o Mesh.o Special1.o
 	$(CXX) $(LDFLAGS) $^ -o $@
 	$(POSTBUILD) $@
 

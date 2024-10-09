@@ -58,14 +58,14 @@ public:
     glm::vec3 getFaceNormal() { return faceNormal; };
 };
 
-class Graph {
+class Mesh {
 private:
     std::vector<Vertex*> vertices;
     std::vector<Edge*> edges;
     std::vector<Face*> faces;
 public:
-    Graph() { };
-    ~Graph() { clear(); };
+    Mesh() { };
+    ~Mesh() { clear(); };
     void addVertex(Vertex* v);
     void addEdge(Edge* e);
     void addFace(Face* f);
@@ -75,9 +75,9 @@ public:
     std::vector<Face*>& getFaces();
     void clear();
     void calculateVertexNormal();
-    Graph* rotate(float angle_x, float angle_y, float angle_z);
-    Graph* transform(glm::mat4 transformation);
-    static Graph* union_graph(std::vector<Graph*>& graphs);
+    Mesh* rotate(float angle_x, float angle_y, float angle_z);
+    Mesh* transform(glm::mat4 transformation);
+    static Mesh* union_graph(std::vector<Mesh*>& graphs);
     static int convertVec3ToInt(glm::vec3 vec);
     // void drawTriangleMeshFromFaces();
     // void drawNormalsFromFaces();

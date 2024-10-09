@@ -1,5 +1,5 @@
 #include "Special1.h"
-#include "Graph.h"
+#include "Mesh.h"
 #include <iostream>
 
 
@@ -17,7 +17,7 @@ void Special1::drawTriangleMeshFromFaces(){
     // Draw side face
     glBegin(GL_TRIANGLES);
 
-    for (Graph* g : this->graphs){
+    for (Mesh* g : this->graphs){
         g->calculateVertexNormal();
         for (Face* face : g->getFaces()) {
                 Vertex* const* verts = face->getVertices();
@@ -78,7 +78,7 @@ void Special1::drawNormal() {
     glColor3f(1.0f, .0f, .0f);
 
     glBegin(GL_LINES);
-    for (Graph* g : this->graphs){
+    for (Mesh* g : this->graphs){
         for (Vertex *v : g->getVertices()){
             const glm::vec3 &normal = v->getNormals();
             const glm::vec3 &pos = (v->getPos());
@@ -93,9 +93,9 @@ void Special1::drawNormal() {
 
 void Special1::calculate() {
    // Create a new graph to store the heart surface
-    Graph* heart = new Graph();
-    Graph* frontHeart= new Graph();
-    Graph* backHeart = new Graph();
+    Mesh* heart = new Mesh();
+    Mesh* frontHeart= new Mesh();
+    Mesh* backHeart = new Mesh();
 
     this->clearGraphs();
 

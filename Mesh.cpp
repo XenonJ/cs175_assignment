@@ -1,17 +1,17 @@
-#include "Graph.h"
+#include "Mesh.h"
 #include <iostream>
 
 // TODO: same vertex should not be added?
-void Graph::addVertex(Vertex* v) {
+void Mesh::addVertex(Vertex* v) {
     vertices.push_back(v);
 }
 
 // TODO: not using edges for now
-void Graph::addEdge(Edge* e) {
+void Mesh::addEdge(Edge* e) {
     edges.push_back(e);
 }
 
-void Graph::addFace(Face* f) {
+void Mesh::addFace(Face* f) {
     faces.push_back(f);
     Vertex* const* vertices = f->getVertices();
     for (int i = 0; i < 3; i++) {
@@ -19,12 +19,12 @@ void Graph::addFace(Face* f) {
     }
 }
 
-std::vector<Vertex*>& Graph::getVertices() {
+std::vector<Vertex*>& Mesh::getVertices() {
     return vertices;
 }
 
 // TODO: improve speed
-Vertex* Graph::getVertexAt(glm::vec3 pos) {
+Vertex* Mesh::getVertexAt(glm::vec3 pos) {
     for (auto v : vertices) {
         float epsilon = 1e-6f;
         if ((std::fabs(v->getPos().x - pos.x) < epsilon) &&
@@ -37,15 +37,15 @@ Vertex* Graph::getVertexAt(glm::vec3 pos) {
 }
 
 // TODO: not using edges for now
-std::vector<Edge*>& Graph::getEdges() {
+std::vector<Edge*>& Mesh::getEdges() {
     return edges;
 }
 
-std::vector<Face*>& Graph::getFaces() {
+std::vector<Face*>& Mesh::getFaces() {
     return faces;
 }
 
-void Graph::clear() {
+void Mesh::clear() {
     for (auto v : vertices) {
         delete v;
     }
@@ -60,7 +60,7 @@ void Graph::clear() {
     faces.clear();
 }
 
-void Graph::calculateVertexNormal() {
+void Mesh::calculateVertexNormal() {
     for (auto v : vertices) {
         glm::vec3 normal(0.0f, 0.0f, 0.0f);
         std::unordered_map<int, bool> mp;
@@ -75,8 +75,8 @@ void Graph::calculateVertexNormal() {
     }
 }
 
-// rotate the Graph and return a new Graph instance
-Graph* Graph::rotate(float angle_x, float angle_y, float angle_z) {
+// rotate the Mesh and return a new Mesh instance
+Mesh* Mesh::rotate(float angle_x, float angle_y, float angle_z) {
     glm::mat4 rotationX = glm::rotate(glm::mat4(1.0f), glm::radians(angle_x), glm::vec3(1, 0, 0));
     glm::mat4 rotationY = glm::rotate(glm::mat4(1.0f), glm::radians(angle_y), glm::vec3(0, 1, 0));
     glm::mat4 rotationZ = glm::rotate(glm::mat4(1.0f), glm::radians(angle_z), glm::vec3(0, 0, 1));
@@ -85,8 +85,8 @@ Graph* Graph::rotate(float angle_x, float angle_y, float angle_z) {
     return transform(rotationMatrix);
 }
 
-Graph* Graph::transform(glm::mat4 transformation) {
-    Graph* ret = new Graph();
+Mesh* Mesh::transform(glm::mat4 transformation) {
+    Mesh* ret = new Mesh();
 
     // store the relation between old and new vertex
     std::unordered_map<Vertex*, Vertex*> vertexMap;
@@ -115,9 +115,9 @@ Graph* Graph::transform(glm::mat4 transformation) {
     return ret;
 }
 
-// union the given list of Graph and return a new Graph
-Graph* Graph::union_graph(std::vector<Graph*>& graphs) {
-    Graph* ret = new Graph();
+// union the given list of Mesh and return a new Mesh
+Mesh* Mesh::union_graph(std::vector<Mesh*>& graphs) {
+    Mesh* ret = new Mesh();
     std::unordered_map<int, Vertex*> vertexMap;
 
     for (auto g : graphs) {
@@ -150,7 +150,7 @@ Graph* Graph::union_graph(std::vector<Graph*>& graphs) {
     return ret;
 }
 
-int Graph::convertVec3ToInt(glm::vec3 vec) {
+int Mesh::convertVec3ToInt(glm::vec3 vec) {
     const float scale = 10000.0f;
     int scaledX = static_cast<int>(std::round(vec.x * scale));
     int scaledY = static_cast<int>(std::round(vec.y * scale));

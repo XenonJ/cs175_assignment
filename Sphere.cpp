@@ -1,5 +1,5 @@
 #include "Sphere.h"
-#include "Graph.h"
+#include "Mesh.h"
 #include <iostream>
 
 
@@ -17,7 +17,7 @@ void Sphere::drawTriangleMeshFromFaces(){
     // Draw side face
     glBegin(GL_TRIANGLES);
 
-    for (Graph* g : this->graphs){
+    for (Mesh* g : this->graphs){
         g->calculateVertexNormal();
         for (Face* face : g->getFaces()) {
                 Vertex* const* verts = face->getVertices();
@@ -78,7 +78,7 @@ void Sphere::drawNormal() {
     glColor3f(1.0f, .0f, .0f);
 
     glBegin(GL_LINES);
-    for (Graph* g : this->graphs){
+    for (Mesh* g : this->graphs){
         for (Vertex *v : g->getVertices()){
             const glm::vec3 &normal = v->getNormals();
             const glm::vec3 &pos = (v->getPos());
@@ -93,7 +93,7 @@ void Sphere::drawNormal() {
 
 void Sphere::calculate() {
     //  Create a new graph to store the sphere surface
-    Graph* sphere = new Graph();
+    Mesh* sphere = new Mesh();
 
     this->clearGraphs();
 
@@ -168,11 +168,11 @@ void Sphere::calculate() {
     }
 
     // Rotate to get other graphs
-    std::vector<Graph*> tempLatiList;
+    std::vector<Mesh*> tempLatiList;
 
     for (int i = 0; i < m_segmentsX; i++)
     {
-        Graph* rotateSide = sphere->rotate(0.0f, i * stepLongitude, 0.0f);
+        Mesh* rotateSide = sphere->rotate(0.0f, i * stepLongitude, 0.0f);
 
         tempLatiList.push_back(rotateSide);
 
@@ -180,7 +180,7 @@ void Sphere::calculate() {
     }
 
     // Union all graph
-    sphere = Graph::union_graph(tempLatiList);
+    sphere = Mesh::union_graph(tempLatiList);
 
     this->graphs.push_back(sphere);
 

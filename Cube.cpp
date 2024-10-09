@@ -1,5 +1,5 @@
 #include "Cube.h"
-#include "Graph.h"
+#include "Mesh.h"
 #include <iostream>
 
 // using namespace std;
@@ -16,7 +16,7 @@ void Cube::drawTriangleMeshFromFaces() {
     // Draw side face
     glBegin(GL_TRIANGLES);
 
-    for (Graph* g : this->graphs) {
+    for (Mesh* g : this->graphs) {
         g->calculateVertexNormal();
         for (Face* face : g->getFaces()) {
             Vertex* const* verts = face->getVertices();
@@ -49,7 +49,7 @@ void Cube::drawNormal() {
     glColor3f(1.0f, .0f, .0f);
 
     glBegin(GL_LINES);
-    for (Graph* g : this->graphs) {
+    for (Mesh* g : this->graphs) {
         for (Vertex* v : g->getVertices()) {
             const glm::vec3& normal = v->getNormals();
             const glm::vec3& pos = (v->getPos());
@@ -64,7 +64,7 @@ void Cube::drawNormal() {
 
 void Cube::calculate() {
 
-    Graph* g = new Graph();
+    Mesh* g = new Mesh();
 
     float stepX = 1.0f / m_segmentsX;
     float stepY = 1.0f / m_segmentsY;

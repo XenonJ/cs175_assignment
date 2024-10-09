@@ -1,5 +1,5 @@
 #include "Cone.h"
-#include "Graph.h"
+#include "Mesh.h"
 #include <iostream>
 
 
@@ -17,7 +17,7 @@ void Cone::drawTriangleMeshFromFaces(){
     // Draw side face
     glBegin(GL_TRIANGLES);
 
-    for (Graph* g : this->graphs){
+    for (Mesh* g : this->graphs){
         g->calculateVertexNormal();
         for (Face* face : g->getFaces()) {
                 Vertex* const* verts = face->getVertices();
@@ -78,7 +78,7 @@ void Cone::drawNormal() {
     glColor3f(1.0f, .0f, .0f);
 
     glBegin(GL_LINES);
-    for (Graph* g : this->graphs){
+    for (Mesh* g : this->graphs){
         for (Vertex *v : g->getVertices()){
             const glm::vec3 &normal = v->getNormals();
             const glm::vec3 &pos = (v->getPos());
@@ -93,8 +93,8 @@ void Cone::drawNormal() {
 
 void Cone::calculate() {
     //  Create a new graph to store the side shape
-    Graph* side = new Graph();
-    Graph* bottom = new Graph();
+    Mesh* side = new Mesh();
+    Mesh* bottom = new Mesh();
 
     this->clearGraphs();
 
@@ -180,13 +180,13 @@ void Cone::calculate() {
     }
 
     // Rotate to get other graphs
-    std::vector<Graph*> tempSideList;
-    std::vector<Graph*> tempBottomList;
+    std::vector<Mesh*> tempSideList;
+    std::vector<Mesh*> tempBottomList;
 
     for (int i = 0; i < m_segmentsX; i++)
     {
-        Graph* rotateSide = side->rotate(0.0f, i * stepAngle, 0.0f);
-        Graph* rotateButtom = bottom->rotate(0.0f, i * stepAngle, 0.0f);
+        Mesh* rotateSide = side->rotate(0.0f, i * stepAngle, 0.0f);
+        Mesh* rotateButtom = bottom->rotate(0.0f, i * stepAngle, 0.0f);
 
         tempSideList.push_back(rotateSide);
         tempBottomList.push_back(rotateButtom);
@@ -194,15 +194,15 @@ void Cone::calculate() {
     }
 
     // Union all graph
-    side = Graph::union_graph(tempSideList);
-    bottom = Graph::union_graph(tempBottomList);
+    side = Mesh::union_graph(tempSideList);
+    bottom = Mesh::union_graph(tempBottomList);
 
     this->graphs.push_back(side);
     this->graphs.push_back(bottom);
     
     // Print total size
     int verticesSize = 0, facesSize = 0;
-    for (Graph* g : this->graphs)
+    for (Mesh* g : this->graphs)
     {   
         verticesSize += g->getVertices().size();
         facesSize += g->getFaces().size();

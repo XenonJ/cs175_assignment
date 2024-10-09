@@ -1,5 +1,5 @@
 #include "Cylinder.h"
-#include "Graph.h"
+#include "Mesh.h"
 #include <iostream>
 
 
@@ -13,7 +13,7 @@ void Cylinder::drawTriangleMeshFromFaces() {
     // Draw side face
     glBegin(GL_TRIANGLES);
 
-    for (Graph* g : this->graphs) {
+    for (Mesh* g : this->graphs) {
         g->calculateVertexNormal();
         for (Face* face : g->getFaces()) {
             Vertex* const* verts = face->getVertices();
@@ -46,7 +46,7 @@ void Cylinder::drawNormal() {
     glColor3f(1.0f, .0f, .0f);
 
     glBegin(GL_LINES);
-    for (Graph* g : this->graphs) {
+    for (Mesh* g : this->graphs) {
         for (Vertex* v : g->getVertices()) {
             const glm::vec3& normal = v->getNormals();
             const glm::vec3& pos = (v->getPos());
@@ -61,9 +61,9 @@ void Cylinder::drawNormal() {
 
 void Cylinder::calculate() {
     //  Create a new graph to store the side shape
-    Graph* side = new Graph();
-    Graph* topFace = new Graph();
-    Graph* bottomFace = new Graph();
+    Mesh* side = new Mesh();
+    Mesh* topFace = new Mesh();
+    Mesh* bottomFace = new Mesh();
 
     this->clearGraphs();
 
@@ -180,7 +180,7 @@ void Cylinder::calculate() {
 
     // Print total size
     int verticesSize = 0, facesSize = 0;
-    for (Graph* g : this->graphs)
+    for (Mesh* g : this->graphs)
     {
         verticesSize += g->getVertices().size();
         facesSize += g->getFaces().size();
