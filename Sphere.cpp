@@ -18,7 +18,6 @@ void Sphere::drawTriangleMeshFromFaces(){
     glBegin(GL_TRIANGLES);
 
     for (Mesh* g : this->graphs){
-        g->calculateVertexNormal();
         for (Face* face : g->getFaces()) {
                 Vertex* const* verts = face->getVertices();
                 for (int i = 0; i < 3; i++)
@@ -183,6 +182,9 @@ void Sphere::calculate() {
     sphere = Mesh::union_graph(tempLatiList);
 
     this->graphs.push_back(sphere);
+    for (Mesh* g : this->graphs){
+        g->calculateVertexNormal();
+    }
 
     // std::cout << "Vertices count: " << sphere->getVertices().size() << std::endl;
     // std::cout << "Faces count: " << sphere->getFaces().size() << std::endl;

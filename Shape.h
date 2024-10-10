@@ -57,8 +57,8 @@ protected:
     void normalizeNormal(float x, float y, float z) { normalizeNormal(glm::vec3(x, y, z)); };
 
     void normalizeNormal(glm::vec3 v) {
-        glm::vec3 tmpV = glm::normalize(v);
-        glNormal3f(tmpV.x, tmpV.y, tmpV.z);
+        // glm::vec3 tmpV = glm::normalize(v);
+        glNormal3f(v.x, v.y, v.z);
     };
 };
 

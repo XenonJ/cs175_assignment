@@ -18,7 +18,6 @@ void Special1::drawTriangleMeshFromFaces(){
     glBegin(GL_TRIANGLES);
 
     for (Mesh* g : this->graphs){
-        g->calculateVertexNormal();
         for (Face* face : g->getFaces()) {
                 Vertex* const* verts = face->getVertices();
                 for (int i = 0; i < 3; i++)
@@ -180,6 +179,9 @@ void Special1::calculate() {
     this->graphs.push_back(heart);
     this->graphs.push_back(backHeart);
     this->graphs.push_back(frontHeart);
+    for (Mesh* g : this->graphs){
+        g->calculateVertexNormal();
+    }
 
 
     // std::cout << "Vertices count: " << heart->getVertices().size() << std::endl;

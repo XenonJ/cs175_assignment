@@ -14,7 +14,6 @@ void Cylinder::drawTriangleMeshFromFaces() {
     glBegin(GL_TRIANGLES);
 
     for (Mesh* g : this->graphs) {
-        g->calculateVertexNormal();
         for (Face* face : g->getFaces()) {
             Vertex* const* verts = face->getVertices();
             for (int i = 0; i < 3; i++)
@@ -184,6 +183,9 @@ void Cylinder::calculate() {
     {
         verticesSize += g->getVertices().size();
         facesSize += g->getFaces().size();
+    }
+    for (Mesh* g : this->graphs){
+        g->calculateVertexNormal();
     }
 
 

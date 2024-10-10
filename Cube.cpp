@@ -17,7 +17,6 @@ void Cube::drawTriangleMeshFromFaces() {
     glBegin(GL_TRIANGLES);
 
     for (Mesh* g : this->graphs) {
-        g->calculateVertexNormal();
         for (Face* face : g->getFaces()) {
             Vertex* const* verts = face->getVertices();
             for (int i = 0; i < 3; i++)
@@ -112,4 +111,7 @@ void Cube::calculate() {
         this->graphs.push_back(g->transform(Matrics[i]));
     }
     delete g;
+    for (Mesh* g : this->graphs){
+        g->calculateVertexNormal();
+    }
 }
