@@ -5,7 +5,7 @@
 
 class Cone : public Shape {
 public:
-	Cone() {};
+	Cone() { calculate(); };
 	~Cone() {};
 
 	OBJ_TYPE getType() {

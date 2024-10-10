@@ -5,7 +5,7 @@
 
 class Special1 : public Shape {
 public:
-	Special1() {};
+	Special1() { calculate(); };
 	~Special1() {};
 
 	OBJ_TYPE getType() {

@@ -5,7 +5,7 @@
 
 class Cube : public Shape {
 public:
-	Cube() {};
+	Cube() { calculate(); };
 	~Cube() {};
 
 	OBJ_TYPE getType() {

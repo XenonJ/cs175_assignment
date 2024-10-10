@@ -184,6 +184,6 @@ void Sphere::calculate() {
 
     this->graphs.push_back(sphere);
 
-    std::cout << "Vertices count: " << sphere->getVertices().size() << std::endl;
-    std::cout << "Faces count: " << sphere->getFaces().size() << std::endl;
+    // std::cout << "Vertices count: " << sphere->getVertices().size() << std::endl;
+    // std::cout << "Faces count: " << sphere->getFaces().size() << std::endl;
 }

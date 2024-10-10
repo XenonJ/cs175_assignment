@@ -28,12 +28,12 @@ public:
     static int m_segmentsY;
 
     Shape() { setSegments(10, 10); };
-    ~Shape() { for (auto g : graphs) { delete g; } };
+    virtual ~Shape() { for (auto g : graphs) { delete g; } };
 
     void setSegments(int segX, int segY) {
         m_segmentsX = segX;
         m_segmentsY = segY;
-        calculate();
+        // calculate();
     }
 
     void clearGraphs() {

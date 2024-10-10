@@ -17,6 +17,7 @@
 #include "Cone.h"
 #include "Sphere.h"
 #include "Special1.h"
+#include "SceneGraph.h"
 
 #include "Camera.h"
 #include "scene/SceneParser.h"
@@ -44,12 +45,15 @@ public:
 
 	Camera* camera;
 	SceneParser* parser;
+	SceneGraph* scene;
 
 	MyGLCanvas(int x, int y, int w, int h, const char *l = 0);
 	~MyGLCanvas();
 	void renderShape(OBJ_TYPE type);
 	void setSegments();
 	void loadSceneFile(const char* filenamePath);
+	void flatSceneData();
+	void flatSceneDataRec(SceneNode* node, glm::mat4 curMat);
 	void setShape(OBJ_TYPE type);
 	void resetScene();
 

@@ -5,7 +5,7 @@
 
 class Sphere : public Shape {
 public:
-	Sphere() {};
+	Sphere() { calculate(); };
 	~Sphere() {};
 
 	OBJ_TYPE getType() {

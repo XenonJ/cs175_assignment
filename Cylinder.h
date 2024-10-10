@@ -5,7 +5,7 @@
 
 class Cylinder : public Shape {
 public:
-	Cylinder() {};
+	Cylinder() { calculate(); };
 	~Cylinder() {};
 
 	OBJ_TYPE getType() {

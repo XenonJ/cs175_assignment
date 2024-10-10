@@ -209,6 +209,6 @@ void Cone::calculate() {
     }
 
 
-    std::cout << "Vertices count: " << verticesSize - m_segmentsX << std::endl;
-    std::cout << "Faces count: " << facesSize << std::endl;
+    // std::cout << "Vertices count: " << verticesSize - m_segmentsX << std::endl;
+    // std::cout << "Faces count: " << facesSize << std::endl;
 }

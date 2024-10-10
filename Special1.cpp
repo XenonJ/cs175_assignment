@@ -182,6 +182,6 @@ void Special1::calculate() {
     this->graphs.push_back(frontHeart);
 
 
-    std::cout << "Vertices count: " << heart->getVertices().size() << std::endl;
-    std::cout << "Faces count: " << heart->getFaces().size() << std::endl;
+    // std::cout << "Vertices count: " << heart->getVertices().size() << std::endl;
+    // std::cout << "Faces count: " << heart->getFaces().size() << std::endl;
 }

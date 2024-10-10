@@ -9,6 +9,7 @@ MyGLCanvas::MyGLCanvas(int x, int y, int w, int h, const char* l) : Fl_Gl_Window
     mode(FL_RGB | FL_ALPHA | FL_DEPTH | FL_DOUBLE);
 
     parser = NULL;
+    scene = NULL;
     camera = NULL;
 
     objType = SHAPE_CUBE;
@@ -32,6 +33,7 @@ MyGLCanvas::~MyGLCanvas() {
     }
     if (parser != NULL) {
         delete parser;
+        delete scene;
     }
 }
 
@@ -55,7 +57,9 @@ void MyGLCanvas::resetScene() {
 
     if (parser != NULL) {
         delete parser;
+        delete scene;
         parser = NULL;
+        scene = NULL;
     }
 }
 
@@ -93,6 +97,7 @@ void MyGLCanvas::renderShape(OBJ_TYPE type) {
 void MyGLCanvas::loadSceneFile(const char* filenamePath) {
     if (parser != NULL) {
         delete parser;
+        delete scene;
     }
     parser = new SceneParser(filenamePath);
 
@@ -100,7 +105,9 @@ void MyGLCanvas::loadSceneFile(const char* filenamePath) {
     cout << "success? " << success << endl;
     if (success == false) {
         delete parser;
+        delete scene;
         parser = NULL;
+        scene = NULL;
     }
     else {
         SceneCameraData cameraData;
@@ -114,12 +121,70 @@ void MyGLCanvas::loadSceneFile(const char* filenamePath) {
         else {
             camera->orientLookAt(cameraData.pos, cameraData.lookAt, cameraData.up);
         }
+        this->scene = new SceneGraph();
+        flatSceneData();
     }
 }
 
+void MyGLCanvas::flatSceneData() {
+    flatSceneDataRec(parser->getRootNode(), glm::mat4(1.0f));
+    this->scene->calculate();
+}
+
+void MyGLCanvas::flatSceneDataRec(SceneNode* node, glm::mat4 curMat) {
+    for (SceneTransformation* transform : node->transformations) {
+        switch (transform->type) {
+            case TRANSFORMATION_SCALE:
+                curMat = glm::scale(curMat, transform->scale);
+                break;
+            case TRANSFORMATION_ROTATE:
+                curMat = glm::rotate(curMat, transform->angle, transform->rotate);
+                break;
+            case TRANSFORMATION_TRANSLATE:
+                curMat = glm::translate(curMat, transform->translate);
+                break;
+            case TRANSFORMATION_MATRIX:
+                curMat = curMat * transform->matrix;
+                break;
+        }
+    }
+    for (ScenePrimitive* primitive : node->primitives){
+        switch (primitive->type) {
+            case SHAPE_CUBE:
+                this->scene->addNode(new SceneGraphNode(curMat, new Cube(), primitive->material));
+                break;
+            case SHAPE_CYLINDER:
+                this->scene->addNode(new SceneGraphNode(curMat, new Cylinder(), primitive->material));
+                break;
+            case SHAPE_CONE:
+                this->scene->addNode(new SceneGraphNode(curMat, new Cone(), primitive->material));
+                break;
+            case SHAPE_SPHERE:
+                this->scene->addNode(new SceneGraphNode(curMat, new Sphere(), primitive->material));
+                break;
+            case SHAPE_SPECIAL1:
+                this->scene->addNode(new SceneGraphNode(curMat, new Special1(), primitive->material));
+                break;
+            default:
+                this->scene->addNode(new SceneGraphNode(curMat, new Cube(), primitive->material));
+        }
+    }
+    if (node->children.size() == 0) {
+        return;
+    }
+    else {
+        for (SceneNode* child : node->children){
+            flatSceneDataRec(child, curMat);
+        }
+    }
+}
 
 void MyGLCanvas::setSegments() {
     shape->setSegments(segmentsX, segmentsY);
+    shape->calculate();
+    if(this->scene != NULL) {
+        this->scene->calculate();
+    }
 }
 
 void MyGLCanvas::draw() {
@@ -212,54 +277,17 @@ void MyGLCanvas::drawObject(OBJ_TYPE type) {
 }
 
 void MyGLCanvas::drawWireframe(SceneNode* node, bool wireframe){
-    // glm::mat4 currentTransform = parentTransform;
     glPushMatrix();
-
-    for (SceneTransformation* transform : node->transformations) {
-        switch (transform->type) {
-            case TRANSFORMATION_SCALE:
-                // glm::scale(currentTransform, transform->scale);
-                glScalef(transform->scale.x, transform->scale.y, transform->scale.z);
-                break;
-            case TRANSFORMATION_ROTATE:
-                // glm::rotate(currentTransform, transform->angle, transform->rotate);
-                glRotatef(glm::degrees(transform->angle), transform->rotate.x, transform->rotate.y, transform->rotate.z);
-                break;
-            case TRANSFORMATION_TRANSLATE:
-                // glm::translate(currentTransform, transform->translate);
-                glTranslatef(transform->translate.x, transform->translate.y, transform->translate.z);
-                break;
-            case TRANSFORMATION_MATRIX:
-                // currentTransform * transform->matrix;
-                glMultMatrixf(glm::value_ptr(transform->matrix));
-                break;
+    for (auto it = this->scene->getIterator(); it != this->scene->getEnd(); ++it) {
+        glPushMatrix();
+        SceneGraphNode* node = *it;
+        if (!this->wireframe) {
+            applyMaterial(node->getMaterial());
         }
-    }
-    
-    // glLoadIdentity();
-    // glMultMatrixf(glm::value_ptr(currentTransform));
-
-    // Draw current primitive
-    for (ScenePrimitive* primitive : node->primitives){
-        // If is wire mode, just draw the shape
-        if(wireframe){
-            renderShape(primitive->type);
-        }
-        // If is fill mode, first apply the material
-        else{
-            applyMaterial(primitive->material);
-            renderShape(primitive->type);
-        }
-
-    }
-
-    // Draw children nodes recursively
-    for (SceneNode* child : node->children){
-        drawWireframe(child, wireframe);
+        node->draw();
+        glPopMatrix();
     }
     glPopMatrix();
-
-
 }
 
 void MyGLCanvas::drawScene() {

@@ -187,6 +187,6 @@ void Cylinder::calculate() {
     }
 
 
-    std::cout << "Vertices count: " << verticesSize - 2 * m_segmentsX << std::endl;
-    std::cout << "Faces count: " << facesSize << std::endl;
+    // std::cout << "Vertices count: " << verticesSize - 2 * m_segmentsX << std::endl;
+    // std::cout << "Faces count: " << facesSize << std::endl;
 }
