@@ -1,5 +1,6 @@
 #include "Cone.h"
 #include "Mesh.h"
+#include <cmath>
 #include <iostream>
 
 
@@ -74,6 +75,7 @@ void Cone::draw(){
 
 void Cone::drawNormal() {
     // drawNormalsFromFaces();
+    // std::cout << "The drawnormal function is called !" << std::endl;
     glColor3f(1.0f, .0f, .0f);
 
     glBegin(GL_LINES);
@@ -118,6 +120,28 @@ void Cone::calculate() {
             glm::vec3 position(x, y, z);
             Vertex* v = new Vertex(position);
 
+            // Check if the vertex is on the bottom (y == -height / 2)
+            if (y == -height / 2) {
+                // This vertex is on the bottom, assign the downward normal
+                glm::vec3 bottomNormal(0.0f, -1.0f, 0.0f);
+                Vertex* tempV = new Vertex(position);
+                tempV->setNormal(bottomNormal);  // Assign the normal to the vertex
+                bottom->addVertex(tempV);
+            }
+            if (y != height / 2){
+                float n_y = float(radius / sqrt(radius*radius + height*height));
+                // Calculate normal for this vertex
+                float Nx = x;
+                float Nz = z;
+                float length = sqrt(Nx * Nx + Nz * Nz);  // Only normalize x and z
+                Nx /= length;
+                Nz /= length;
+                glm::vec3 normal(Nx, n_y , Nz);
+                normal = glm::normalize(normal);  // Normalize the normal vector
+                v->setNormal(normal);  // Store the normal directly in the vertex
+            }
+
+            
             side->addVertex(v);
             tempVerts.push_back(v);  // Store vertex in tempVerts
         }
@@ -162,6 +186,7 @@ void Cone::calculate() {
     // Add bottom mesh
     glm::vec3 bottomVertexPos(0.0f, -height / 2, 0.0f);
     Vertex* bottomVertex = new Vertex(bottomVertexPos);
+    bottomVertex->setNormal(glm::vec3(0.0f, -1.0f, 0.0f));
     bottom->addVertex(bottomVertex);
 
     // Create the bottom face by connecting each segment to the center
@@ -178,9 +203,9 @@ void Cone::calculate() {
     this->graphs.push_back(bottom);
 
     // Calculate normals for shading
-    for (Mesh* g : this->graphs) {
-        g->calculateVertexNormal();
-    }
+    // for (Mesh* g : this->graphs) {
+    //     g->calculateVertexNormal();
+    // }
 
     // Optional: Print total number of vertices and faces
     int verticesSize = 0, facesSize = 0;

@@ -247,6 +247,14 @@ void MyGLCanvas::drawObject(OBJ_TYPE type) {
         glDisable(GL_LIGHT0 + i);
     }
 
+    if (normal) {
+        // std::cout << "show the normal" << std::endl;
+        glDisable(GL_LIGHTING);
+        glColor3f(1.0, 0.0, 0.0);
+        shape->drawNormal();
+        glEnable(GL_LIGHTING);
+    }
+
     GLfloat light_pos0[] = { -1.0, -0.5, -2.0, 0.0f };
     GLfloat ambient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
     GLfloat diffuse[] = { 0.9f, 0.9f, 0.9f, 1.0f };
@@ -291,11 +299,20 @@ void MyGLCanvas::drawWireframe(SceneNode* node){
 }
 
 void MyGLCanvas::drawScene() {
+    
     if (parser == NULL) {
         return;
     }
 
     glPushMatrix();
+
+    if (normal) {
+        // std::cout << "show the normal" << std::endl;
+        glDisable(GL_LIGHTING);
+        glColor3f(1.0, 0.0, 0.0);
+        shape->drawNormal();
+        glEnable(GL_LIGHTING);
+    }
 
     //disable all the lights, and then enable each one...
     for (int i = 0; i < NUM_OPENGL_LIGHTS; i++) {
