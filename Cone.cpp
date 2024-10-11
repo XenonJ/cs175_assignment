@@ -91,126 +91,103 @@ void Cone::drawNormal() {
 }
 
 void Cone::calculate() {
-    //  Create a new graph to store the side shape
+    // Create a new mesh to store the cone
     Mesh* side = new Mesh();
     Mesh* bottom = new Mesh();
-
     this->clearGraphs();
 
-    float stepAngle = 360.0f / m_segmentsX; 
-    float stepY = 1.0f / m_segmentsY;      
+    float stepAngle = 2.0f * glm::pi<float>() / m_segmentsX;  // 360 degrees divided by segmentsX
+    float stepY = 1.0f / m_segmentsY;  // Height divided by segmentsY
 
+    float height = 1.0f;  // Total height of the cone
+    float radius = 0.5f;  // Base radius of the cone
 
+    std::vector<Vertex*> tempVerts;  // Store all vertices for easy access
 
-    // Create side vertices
-    
-    float angle = glm::radians(stepAngle);  
-    float x1 = radius * glm::cos(0);
-    float z1 = radius * glm::sin(0); 
-
-    float x2 = radius * glm::cos(angle);
-    float z2 = radius * glm::sin(angle); 
-
-    for (int i = m_segmentsY; i > 0; i--)
-    {
+    // Generate vertices for the side mesh, based on segmentY and segmentX
+    for (int i = 0; i <= m_segmentsY; i++) {
         float rate = i * stepY;
-        // left bottom
-        float x1 = rate * radius * glm::cos(0);
-        float z1 = rate * radius * glm::sin(0); 
-        // Right bottom
-        float x2 = rate * radius * glm::cos(angle);
-        float z2 = rate * radius * glm::sin(angle);
+        float y = -height / 2 + i * stepY * height;  // y-coordinate for each level
+        float r = radius * (height / 2 - y) / height;  // Calculate radius for current height level
 
-        float y = radius - i * stepY;
-        glm::vec3 position1(x1, y, z1);
-        glm::vec3 position2(x2, y, z2);
+        for (int j = 0; j < m_segmentsX; j++) {
+            float angle = j * stepAngle;
+            float x = r * glm::cos(angle);  // x-coordinate
+            float z = r * glm::sin(angle);  // z-coordinate
 
-        // Build vertex with position
-        Vertex* v1 = new Vertex(position1);
-        Vertex* v2 = new Vertex(position2);
+            glm::vec3 position(x, y, z);
+            Vertex* v = new Vertex(position);
 
-        side->addVertex(v1);
-        side->addVertex(v2);
-
-        if (i == m_segmentsY)
-        {
-            // Add bottom vertex(y = -0.5)
-            glm::vec3 bottomVertexPos(0.0f, -radius, 0.0f);
-            Vertex* bottomVertex = new Vertex(bottomVertexPos);
-            bottom->addVertex(bottomVertex);
-            bottom->addVertex(v1);
-            bottom->addVertex(v2);
-            Face* bottomFace = new Face(bottomVertex, v1, v2);
-            bottom->addFace(bottomFace);
-        }
-
-        if (i == 1)
-        {
-            // Add top vertex(y = 0.5)
-            glm::vec3 topVertexPos(0.0f, radius, 0.0f);
-            Vertex* topVertex = new Vertex(topVertexPos);
-            side->addVertex(topVertex);
+            side->addVertex(v);
+            tempVerts.push_back(v);  // Store vertex in tempVerts
         }
     }
 
-    // Build the side face with vertices
-    std::vector<Vertex*> tempVerts = side->getVertices();
-    for (int j = 0; j < m_segmentsY; j++)
-    {
-        int index1 = j * 2;
-        int index2 = index1 + 1;
-        int index3 = (j + 1) * 2;
-        int index4 = index3 + 1;
+    // Add the top vertex (apex of the cone)
+    glm::vec3 topVertexPos(0.0f, height / 2, 0.0f);
+    Vertex* topVertex = new Vertex(topVertexPos);
+    side->addVertex(topVertex);
+    
+    // Generate side faces using index-based method
+    for (int i = 0; i < m_segmentsY; ++i) {
+        for (int j = 0; j < m_segmentsX; ++j) {
+            // Calculate indices for the current and next vertices
+            int index1 = i * m_segmentsX + j;
+            int index2 = index1 + 1;
+            if (j == m_segmentsX - 1) index2 = i * m_segmentsX;  // Wrap around to first vertex
 
-        Face* f1 = new Face(tempVerts[index1], tempVerts[index3], tempVerts[index4]);
-        Face* f2 = new Face(tempVerts[index4], tempVerts[index2], tempVerts[index1]);
+            int index3 = (i + 1) * m_segmentsX + j;
+            int index4 = index3 + 1;
+            if (j == m_segmentsX - 1) index4 = (i + 1) * m_segmentsX;  // Wrap around
 
-        side->addFace(f1);
-        side->addFace(f2);
+            // Create two faces for each segment
+            Face* f1 = new Face(tempVerts[index1], tempVerts[index3], tempVerts[index4]);
+            Face* f2 = new Face(tempVerts[index4], tempVerts[index2], tempVerts[index1]);
 
-        if (index4 == 2 * m_segmentsY - 1)
-        {
-            Face* f3 = new Face(tempVerts[index4 + 1], tempVerts[index4], tempVerts[index3]);
-            side->addFace(f3);
-            break;
+            side->addFace(f1);
+            side->addFace(f2);
         }
-
-
     }
 
-    // Rotate to get other graphs
-    std::vector<Mesh*> tempSideList;
-    std::vector<Mesh*> tempBottomList;
+    // Create the top face that connects the last ring to the top vertex
+    for (int j = 0; j < m_segmentsX; ++j) {
+        int index1 = m_segmentsY * m_segmentsX + j;  // Last ring of vertices
+        int index2 = m_segmentsY * m_segmentsX + (j + 1) % m_segmentsX;  // Wrap around
 
-    for (int i = 0; i < m_segmentsX; i++)
-    {
-        Mesh* rotateSide = side->rotate(0.0f, i * stepAngle, 0.0f);
-        Mesh* rotateButtom = bottom->rotate(0.0f, i * stepAngle, 0.0f);
-
-        tempSideList.push_back(rotateSide);
-        tempBottomList.push_back(rotateButtom);
-
+        // Create a face that connects the top vertex to the last ring
+        Face* f = new Face(tempVerts[index1], topVertex, tempVerts[index2]);
+        side->addFace(f);
     }
 
-    // Union all graph
-    side = Mesh::union_graph(tempSideList);
-    bottom = Mesh::union_graph(tempBottomList);
+    // Add bottom mesh
+    glm::vec3 bottomVertexPos(0.0f, -height / 2, 0.0f);
+    Vertex* bottomVertex = new Vertex(bottomVertexPos);
+    bottom->addVertex(bottomVertex);
 
+    // Create the bottom face by connecting each segment to the center
+    for (int j = 0; j < m_segmentsX; ++j) {
+        int index1 = j;
+        int index2 = (j + 1) % m_segmentsX;  // Wrap around
+
+        Face* bottomFace = new Face(bottomVertex, tempVerts[index2], tempVerts[index1]);
+        bottom->addFace(bottomFace);
+    }
+
+    // Add bottom and side meshes to the graphs
     this->graphs.push_back(side);
     this->graphs.push_back(bottom);
-    
-    // Print total size
-    int verticesSize = 0, facesSize = 0;
-    for (Mesh* g : this->graphs)
-    {   
-        verticesSize += g->getVertices().size();
-        facesSize += g->getFaces().size();
-    }
-    for (Mesh* g : this->graphs){
+
+    // Calculate normals for shading
+    for (Mesh* g : this->graphs) {
         g->calculateVertexNormal();
     }
 
-
-    // std::cout << "Vertices count: " << verticesSize - m_segmentsX << std::endl;
-    // std::cout << "Faces count: " << facesSize << std::endl;
+    // Optional: Print total number of vertices and faces
+    int verticesSize = 0, facesSize = 0;
+    for (Mesh* g : this->graphs) {
+        verticesSize += g->getVertices().size();
+        facesSize += g->getFaces().size();
+    }
+    std::cout << "Vertices count: " << verticesSize << std::endl;
+    std::cout << "Faces count: " << facesSize << std::endl;
 }

@@ -276,7 +276,7 @@ void MyGLCanvas::drawObject(OBJ_TYPE type) {
     }
 }
 
-void MyGLCanvas::drawWireframe(SceneNode* node, bool wireframe){
+void MyGLCanvas::drawWireframe(SceneNode* node){
     glPushMatrix();
     for (auto it = this->scene->getIterator(); it != this->scene->getEnd(); ++it) {
         glPushMatrix();
@@ -311,7 +311,7 @@ void MyGLCanvas::drawScene() {
         glDisable(GL_POLYGON_OFFSET_FILL);
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         //TODO: draw wireframe of the scene
-        drawWireframe(root, true);
+        drawWireframe(root);
         // note that you don't need to applyMaterial, just draw the geometry
         glEnable(GL_LIGHTING);
     }
@@ -333,7 +333,7 @@ void MyGLCanvas::drawScene() {
 
         // glPolygonMode(GL_BACK, GL_LINE);
         //TODO: render the scene
-        drawWireframe(root, false);
+        drawWireframe(root);
         // note that you should always applyMaterial first before drawing each geometry
     }
     glDisable(GL_LIGHTING);
