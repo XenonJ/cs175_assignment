@@ -91,22 +91,25 @@ void Sphere::drawNormal() {
 }
 
 void Sphere::calculate() {
-    //  Create a new graph to store the sphere surface
+    // Create a new graph to store the sphere surface
     Mesh* sphere = new Mesh();
 
     this->clearGraphs();
 
-    float stepLongitude = 360.0f / m_segmentsX;  // Longitude angle
-    float stepLatitude = 180.0f / m_segmentsY;   // Latitude angle
+    float stepLongitude = 2.0f * glm::pi<float>() / m_segmentsX;  // Longitude angle step (radians)
+    float stepLatitude = glm::pi<float>() / m_segmentsY;  // Latitude angle step (radians)
+
+    // Store all vertices in the sphere
+    std::vector<Vertex*> tempVerts;
 
     // Generate vertices from southern point to northern point
-    for (int i = 1; i < m_segmentsY; i++) {
-        float latAngle = glm::radians(-90.0f + i * stepLatitude); 
+    for (int i = 1; i < m_segmentsY; i++) {  // Skipping poles (i = 0 for south, i = m_segmentsY for north)
+        float latAngle = -glm::half_pi<float>() + i * stepLatitude;  // Latitude angle from -π/2 to π/2
         float sinLat = glm::sin(latAngle);
         float cosLat = glm::cos(latAngle);
 
-        for (int j = 0; j < 2; j++) {
-            float lonAngle = glm::radians(j * stepLongitude); 
+        for (int j = 0; j < m_segmentsX; j++) {  // Full rotation in longitude
+            float lonAngle = j * stepLongitude;  // Longitude angle
             float sinLon = glm::sin(lonAngle);
             float cosLon = glm::cos(lonAngle);
 
@@ -117,75 +120,78 @@ void Sphere::calculate() {
 
             glm::vec3 position(x, y, z);
 
-            // Create vertex and add into graph
+            // Create vertex
             Vertex* v = new Vertex(position);
+
+            // Set the normal to be the normalized position vector (direction from the origin)
+            glm::vec3 normal = glm::normalize(position);
+            v->setNormal(normal);  // Set normal for this vertex
+
+            // Add vertex to the mesh and store in temporary list
             sphere->addVertex(v);
+            tempVerts.push_back(v);  // Store vertex in tempVerts
         }
     }
 
-    glm::vec3 topPosition(0.0f, 0.5f, 0.0f);
-    glm::vec3 bottomPosition(0.0f, -0.5f, 0.0f);
+    // Add poles (north and south vertices)
+    glm::vec3 topPosition(0.0f, radius, 0.0f);      // North pole
+    glm::vec3 bottomPosition(0.0f, -radius, 0.0f);  // South pole
     Vertex* topv = new Vertex(topPosition);
     Vertex* bottomv = new Vertex(bottomPosition);
 
-    int bottomIndex = sphere->getVertices().size();
-    sphere->addVertex(bottomv);
-    int topIndex = sphere->getVertices().size();
-    sphere->addVertex(topv);
+    // Set normals for poles
+    topv->setNormal(glm::vec3(0.0f, 1.0f, 0.0f));     // North pole normal points upwards
+    bottomv->setNormal(glm::vec3(0.0f, -1.0f, 0.0f)); // South pole normal points downwards
 
-    // Build face of the sphere
-    std::vector<Vertex*> verts = sphere->getVertices();
+    // Add poles to the mesh
+    sphere->addVertex(bottomv);  // South pole
+    sphere->addVertex(topv);     // North pole
 
-    for (int i = 0; i < m_segmentsY; i++)
-    {
-        // First triangle face
-        if (i == 0)
-        {
-            Face* bottomFace = new Face(verts[bottomIndex], verts[0], verts[1]);
-            sphere->addFace(bottomFace);
-            continue;
+    int bottomIndex = tempVerts.size();  // Index for south pole
+    int topIndex = bottomIndex + 1;      // Index for north pole
+
+    // Build faces for the sphere
+    for (int i = 0; i < m_segmentsY - 1; i++) {
+        for (int j = 0; j < m_segmentsX; j++) {
+            int nextJ = (j + 1) % m_segmentsX;  // Wrap around in longitude
+
+            // First row: connect bottom (south pole)
+            if (i == 0) {
+                Face* bottomFace = new Face(sphere->getVertices()[bottomIndex], tempVerts[j], tempVerts[nextJ]);
+                sphere->addFace(bottomFace);
+            }
+            // Last row: connect top (north pole)
+            else if (i == m_segmentsY - 2) {
+                int baseIndex = (i) * m_segmentsX;
+                int baseIndex1 = (i - 1) * m_segmentsX;
+                int baseIndex2 = i * m_segmentsX;
+
+                Face* f1 = new Face(tempVerts[baseIndex1 + j], tempVerts[baseIndex2 + j], tempVerts[baseIndex2 + nextJ]);
+                Face* f2 = new Face(tempVerts[baseIndex2 + nextJ], tempVerts[baseIndex1 + nextJ], tempVerts[baseIndex1 + j]);
+
+                sphere->addFace(f1);
+                sphere->addFace(f2);
+                Face* topFace = new Face(sphere->getVertices()[topIndex], tempVerts[baseIndex + nextJ], tempVerts[baseIndex + j]);
+                sphere->addFace(topFace);
+            }
+            // Middle rows: connect latitude strips
+            else {
+                int baseIndex1 = (i - 1) * m_segmentsX;
+                int baseIndex2 = i * m_segmentsX;
+
+                Face* f1 = new Face(tempVerts[baseIndex1 + j], tempVerts[baseIndex2 + j], tempVerts[baseIndex2 + nextJ]);
+                Face* f2 = new Face(tempVerts[baseIndex2 + nextJ], tempVerts[baseIndex1 + nextJ], tempVerts[baseIndex1 + j]);
+
+                sphere->addFace(f1);
+                sphere->addFace(f2);
+            }
         }
-        // Last triangle face
-        else if (i == m_segmentsY - 1)
-        {
-            Face* topFace = new Face(verts[topIndex], verts[2*i - 1], verts[2*i - 2]);
-            sphere->addFace(topFace);
-            break;
-        }
-
-        int leftdown = (i - 1) * 2;
-        int rightdown = leftdown + 1;
-        int leftup = i * 2;
-        int rightup = leftup + 1;
-
-        Face* f1 = new Face(verts[leftdown], verts[leftup], verts[rightup]);
-        Face* f2 = new Face(verts[rightup], verts[rightdown], verts[leftdown]);
-
-        sphere->addFace(f1);
-        sphere->addFace(f2);
-
     }
 
-    // Rotate to get other graphs
-    std::vector<Mesh*> tempLatiList;
-
-    for (int i = 0; i < m_segmentsX; i++)
-    {
-        Mesh* rotateSide = sphere->rotate(0.0f, i * stepLongitude, 0.0f);
-
-        tempLatiList.push_back(rotateSide);
-
-
-    }
-
-    // Union all graph
-    sphere = Mesh::union_graph(tempLatiList);
-
+    // Add mesh to graphs
     this->graphs.push_back(sphere);
-    for (Mesh* g : this->graphs){
-        g->calculateVertexNormal();
-    }
 
-    // std::cout << "Vertices count: " << sphere->getVertices().size() << std::endl;
-    // std::cout << "Faces count: " << sphere->getFaces().size() << std::endl;
+    // Optional: Output vertex and face counts
+    std::cout << "Vertices count: " << sphere->getVertices().size() << std::endl;
+    std::cout << "Faces count: " << sphere->getFaces().size() << std::endl;
 }
