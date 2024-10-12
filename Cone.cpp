@@ -137,7 +137,7 @@ void Cone::calculate() {
                 Nx /= length;
                 Nz /= length;
                 glm::vec3 normal(Nx, n_y , Nz);
-                normal = glm::normalize(normal);  // Normalize the normal vector
+                // normal = glm::normalize(normal);  // Normalize the normal vector
                 v->setNormal(normal);  // Store the normal directly in the vertex
             }
 

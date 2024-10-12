@@ -88,14 +88,15 @@ void Cylinder::calculate() {
             // Build vertex with position and normal
             Vertex* v = new Vertex(position);
 
+            v->setNormal(glm::vec3(x, 0.0f, z));
             side->addVertex(v);
-
             /* Add vertice on top and bottom to their graph */
 
             if (i == 0) // This point to the bottom
             {
                 Vertex* vbottom = new Vertex(position);
                 glm::vec3 bottomNormal = glm::normalize(glm::vec3(0.0f, -1.0f, 0.0f));
+                vbottom->setNormal(bottomNormal);
                 bottomFace->addVertex(vbottom);
             }
 
@@ -103,6 +104,7 @@ void Cylinder::calculate() {
             {
                 Vertex* vtop = new Vertex(position);
                 glm::vec3 topNormal = glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f));
+                vtop->setNormal(topNormal);
                 topFace->addVertex(vtop);
             }
         }
@@ -142,11 +144,13 @@ void Cylinder::calculate() {
     int topCenterIndex = this->vertices.size();
     glm::vec3 topNormal = glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f));
     Vertex* top = new Vertex(topCenter);
+    top->setNormal(topNormal);
     topFace->addVertex(top);
 
     int bottomCenterIndex = this->vertices.size();
     glm::vec3 bottomNormal = glm::normalize(glm::vec3(0.0f, -1.0f, 0.0f));
     Vertex* bottom = new Vertex(bottomCenter);
+    bottom->setNormal(bottomNormal);
     bottomFace->addVertex(bottom);
 
 
@@ -184,9 +188,7 @@ void Cylinder::calculate() {
         verticesSize += g->getVertices().size();
         facesSize += g->getFaces().size();
     }
-    for (Mesh* g : this->graphs){
-        g->calculateVertexNormal();
-    }
+
 
 
     // std::cout << "Vertices count: " << verticesSize - 2 * m_segmentsX << std::endl;
