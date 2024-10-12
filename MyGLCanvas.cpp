@@ -181,9 +181,13 @@ void MyGLCanvas::flatSceneDataRec(SceneNode* node, glm::mat4 curMat) {
 
 void MyGLCanvas::setSegments() {
     shape->setSegments(segmentsX, segmentsY);
-    shape->calculate();
-    if(this->scene != NULL) {
-        this->scene->calculate();
+    if (objType == SHAPE_SCENE) {
+        if(this->scene != NULL) {
+            this->scene->calculate();
+        }
+    }
+    else {
+        shape->calculate();
     }
 }
 

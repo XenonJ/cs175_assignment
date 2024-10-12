@@ -65,6 +65,7 @@ private:
     std::vector<Face*> faces;
 public:
     Mesh() { };
+    Mesh(int vcount, int fcount) { vertices.reserve(vcount); faces.reserve(fcount); };
     ~Mesh() { clear(); };
     void addVertex(Vertex* v);
     void addEdge(Edge* e);
