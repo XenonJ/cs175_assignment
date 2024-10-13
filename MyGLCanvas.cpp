@@ -310,13 +310,13 @@ void MyGLCanvas::drawScene() {
 
     glPushMatrix();
 
-    if (normal) {
+    // if (normal) {
         // std::cout << "show the normal" << std::endl;
-        glDisable(GL_LIGHTING);
-        glColor3f(1.0, 0.0, 0.0);
-        shape->drawNormal();
-        glEnable(GL_LIGHTING);
-    }
+        // glDisable(GL_LIGHTING);
+        // glColor3f(1.0, 0.0, 0.0);
+        // shape->drawNormal();
+        // glEnable(GL_LIGHTING);
+    // }
 
     //disable all the lights, and then enable each one...
     for (int i = 0; i < NUM_OPENGL_LIGHTS; i++) {
