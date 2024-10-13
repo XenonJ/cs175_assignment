@@ -62,6 +62,7 @@ private:
 	float nearPlane, farPlane;
 	int screenWidth, screenHeight;
 	float screenWidthRatio;
+	glm::vec3 u, v, w, eyePoint;
 };
 #endif
 
