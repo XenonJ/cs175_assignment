@@ -88,15 +88,58 @@ void Cube::draw() {
 void Cube::drawNormal() {
     glColor3f(1.0f, .0f, .0f);
 
+    // Front face
+    glPushMatrix();
+    glTranslatef(0.0f, 0.0f, 0.5f);  // Move front face to z = 0.5
+    drawNormalForSingleFace();       // Draw normals for the front face
+    glPopMatrix();
+
+    // Back face
+    glPushMatrix();
+    glTranslatef(0.0f, 0.0f, -0.5f);  // Move back face to z = -0.5
+    glRotatef(180.0f, 1.0f, 0.0f, 0.0f);  // Rotate back face by 180 degrees along x-axis
+    drawNormalForSingleFace();        // Draw normals for the back face
+    glPopMatrix();
+
+    // Right face
+    glPushMatrix();
+    glTranslatef(0.5f, 0.0f, 0.0f);  // Move right face to x = 0.5
+    glRotatef(90.0f, 0.0f, 1.0f, 0.0f);  // Rotate right face by 90 degrees along y-axis
+    drawNormalForSingleFace();        // Draw normals for the right face
+    glPopMatrix();
+
+    // Left face
+    glPushMatrix();
+    glTranslatef(-0.5f, 0.0f, 0.0f);  // Move left face to x = -0.5
+    glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);  // Rotate left face by -90 degrees along y-axis
+    drawNormalForSingleFace();         // Draw normals for the left face
+    glPopMatrix();
+
+    // Bottom face
+    glPushMatrix();
+    glTranslatef(0.0f, -0.5f, 0.0f);  // Move bottom face to y = -0.5
+    glRotatef(90.0f, 1.0f, 0.0f, 0.0f);  // Rotate bottom face by 90 degrees along x-axis
+    drawNormalForSingleFace();        // Draw normals for the bottom face
+    glPopMatrix();
+
+    // Top face
+    glPushMatrix();
+    glTranslatef(0.0f, 0.5f, 0.0f);  // Move top face to y = 0.5
+    glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);  // Rotate top face by -90 degrees along x-axis
+    drawNormalForSingleFace();        // Draw normals for the top face
+    glPopMatrix();
+}
+
+void Cube::drawNormalForSingleFace() {
     glBegin(GL_LINES);
     for (Mesh* g : this->graphs) {
         for (Vertex* v : g->getVertices()) {
             const glm::vec3& normal = v->getNormals();
             const glm::vec3& pos = (v->getPos());
 
+            // Draw normal vector from the vertex position
             glVertex3f(pos.x, pos.y, pos.z);
-            glVertex3f(pos.x + normal.x * .1f, pos.y + normal.y * .1f,
-                pos.z + normal.z * .1f);
+            glVertex3f(pos.x + normal.x * 0.1f, pos.y + normal.y * 0.1f, pos.z + normal.z * 0.1f);
         }
     }
     glEnd();
@@ -117,7 +160,10 @@ void Cube::calculate() {
             float y = j * stepY - 0.5f;
             float z = 0.0f;
 
-            g->addVertex(new Vertex(glm::vec3(x, y, z)));
+            glm::vec3 position(x, y, z);
+            Vertex* v = new Vertex(position);
+            v->setNormal(glm::vec3(0.0f, 0.0f, 1.0f));
+            g->addVertex(v);
         }
     }
 
@@ -152,9 +198,9 @@ void Cube::calculate() {
     // for (int i = 0; i < 6; i++) {
         this->graphs.push_back(g);
     // }
-    for (Mesh* g : this->graphs){
-        g->calculateVertexNormal();
-    }
+    // for (Mesh* g : this->graphs){
+    //     g->calculateVertexNormal();
+    // }
     // delete g;
 
 }
