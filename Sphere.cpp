@@ -91,8 +91,10 @@ void Sphere::drawNormal() {
 }
 
 void Sphere::calculate() {
+    int vcount = m_segmentsX * m_segmentsY;
+    int fcount = m_segmentsX * (m_segmentsY - 1);
     // Create a new graph to store the sphere surface
-    Mesh* sphere = new Mesh();
+    Mesh* sphere = new Mesh(vcount, fcount);
 
     this->clearGraphs();
 

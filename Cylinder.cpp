@@ -59,10 +59,12 @@ void Cylinder::drawNormal() {
 }
 
 void Cylinder::calculate() {
+    int vcount = (m_segmentsY + 1) * m_segmentsX;
+    int fcount = m_segmentsX * m_segmentsY * 2;
     //  Create a new graph to store the side shape
-    Mesh* side = new Mesh();
-    Mesh* topFace = new Mesh();
-    Mesh* bottomFace = new Mesh();
+    Mesh* side = new Mesh(vcount, fcount);
+    Mesh* topFace = new Mesh(m_segmentsX, m_segmentsX);
+    Mesh* bottomFace = new Mesh(m_segmentsX, m_segmentsX);
 
     this->clearGraphs();
 

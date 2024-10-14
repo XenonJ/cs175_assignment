@@ -62,8 +62,9 @@ void Cube::drawNormal() {
 }
 
 void Cube::calculate() {
-
-    Mesh* g = new Mesh();
+    int vcount = (m_segmentsX + 1) * (m_segmentsY + 1) * 6;
+    int fcount = m_segmentsX * m_segmentsY * 12;
+    Mesh* g = new Mesh(vcount, fcount);
 
     float stepX = 1.0f / m_segmentsX;
     float stepY = 1.0f / m_segmentsY;
@@ -110,8 +111,9 @@ void Cube::calculate() {
     for (int i = 0; i < 6; i++) {
         this->graphs.push_back(g->transform(Matrics[i]));
     }
-    delete g;
     for (Mesh* g : this->graphs){
         g->calculateVertexNormal();
     }
+    delete g;
+
 }

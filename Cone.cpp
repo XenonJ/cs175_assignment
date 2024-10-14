@@ -93,9 +93,11 @@ void Cone::drawNormal() {
 }
 
 void Cone::calculate() {
+    int vcount = m_segmentsX * (m_segmentsY + 1);
+    int fcount = m_segmentsX * m_segmentsY * 2;
     // Create a new mesh to store the cone
-    Mesh* side = new Mesh();
-    Mesh* bottom = new Mesh();
+    Mesh* side = new Mesh(vcount, fcount);
+    Mesh* bottom = new Mesh(m_segmentsX, m_segmentsX);
     this->clearGraphs();
 
     float stepAngle = 2.0f * glm::pi<float>() / m_segmentsX;  // 360 degrees divided by segmentsX
