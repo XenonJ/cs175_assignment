@@ -48,7 +48,7 @@ void Mesh::clear() {
         delete vertices[i];
     }
     for (int i = 0; i < lastF; i++) {
-        delete faces[i];
+        if (faces[i] != nullptr) delete faces[i];
     }
     delete vertices;
     delete edges;
