@@ -91,10 +91,12 @@ void Special1::drawNormal() {
 }
 
 void Special1::calculate() {
+    int vcount = (m_segmentsY + 1) * (m_segmentsX + 1);
+    int fcount = m_segmentsX * m_segmentsY * 2;
    // Create a new graph to store the heart surface
-    Mesh* heart = new Mesh();
-    Mesh* frontHeart= new Mesh();
-    Mesh* backHeart = new Mesh();
+    Mesh* heart = new Mesh(vcount, fcount);
+    Mesh* frontHeart= new Mesh(m_segmentsX + 1, m_segmentsX * 2);
+    Mesh* backHeart = new Mesh(m_segmentsX + 1, m_segmentsX * 2);
 
     this->clearGraphs();
 
@@ -134,16 +136,16 @@ void Special1::calculate() {
     Vertex* topv = new Vertex(topPosition);
     Vertex* bottomv = new Vertex(bottomPosition);
 
-    int backIndex = backHeart->getVertices().size();
-    int frontIndex = frontHeart->getVertices().size();
+    int backIndex = m_segmentsX;
+    int frontIndex = m_segmentsX;
 
     backHeart->addVertex(bottomv);
     frontHeart->addVertex(topv);
 
     // Now connect vertices to form faces (triangles) between each layer
-    std::vector<Vertex*> verts = heart->getVertices();
-    std::vector<Vertex*> backs = backHeart->getVertices();
-    std::vector<Vertex*> fronts = frontHeart->getVertices();
+    Vertex** verts = heart->getVertices();
+    Vertex** backs = backHeart->getVertices();
+   Vertex** fronts = frontHeart->getVertices();
 
     for (int i = 0; i < m_segmentsY; ++i) {
         for (int j = 0; j < m_segmentsX; ++j) {
@@ -179,9 +181,9 @@ void Special1::calculate() {
     this->graphs.push_back(heart);
     this->graphs.push_back(backHeart);
     this->graphs.push_back(frontHeart);
-    for (Mesh* g : this->graphs){
-        g->calculateVertexNormal();
-    }
+    // for (Mesh* g : this->graphs){
+    //     g->calculateVertexNormal();
+    // }
 
 
     // std::cout << "Vertices count: " << heart->getVertices().size() << std::endl;
