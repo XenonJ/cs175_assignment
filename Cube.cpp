@@ -146,8 +146,8 @@ void Cube::drawNormalForSingleFace() {
 }
 
 void Cube::calculate() {
-    int vcount = (m_segmentsX + 1) * (m_segmentsY + 1) * 6;
-    int fcount = m_segmentsX * m_segmentsY * 12;
+    int vcount = (m_segmentsX + 1) * (m_segmentsY + 1);
+    int fcount = m_segmentsX * m_segmentsY * 2;
     Mesh* g = new Mesh(vcount, fcount);
 
     float stepX = 1.0f / m_segmentsX;
@@ -196,7 +196,7 @@ void Cube::calculate() {
 
     this->clearGraphs();
     // for (int i = 0; i < 6; i++) {
-        this->graphs.push_back(g);
+    this->graphs.push_back(g);
     // }
     // for (Mesh* g : this->graphs){
     //     g->calculateVertexNormal();
