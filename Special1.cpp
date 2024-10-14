@@ -18,7 +18,7 @@ void Special1::drawTriangleMeshFromFaces(){
     glBegin(GL_TRIANGLES);
 
     for (Mesh* g : this->graphs){
-        for (Face* face : g->getFaces()) {
+        for (Face* face : *g->getFaceIterator()) {
                 Vertex* const* verts = face->getVertices();
                 for (int i = 0; i < 3; i++)
                 {
@@ -78,7 +78,7 @@ void Special1::drawNormal() {
 
     glBegin(GL_LINES);
     for (Mesh* g : this->graphs){
-        for (Vertex *v : g->getVertices()){
+        for (Vertex *v : *g->getVertexIterator()){
             const glm::vec3 &normal = v->getNormals();
             const glm::vec3 &pos = (v->getPos());
             
@@ -91,99 +91,99 @@ void Special1::drawNormal() {
 }
 
 void Special1::calculate() {
-   // Create a new graph to store the heart surface
-    Mesh* heart = new Mesh();
-    Mesh* frontHeart= new Mesh();
-    Mesh* backHeart = new Mesh();
+//    // Create a new graph to store the heart surface
+//     Mesh* heart = new Mesh();
+//     Mesh* frontHeart= new Mesh();
+//     Mesh* backHeart = new Mesh();
 
-    this->clearGraphs();
+//     this->clearGraphs();
 
-    float stepAngleX = 360.0f / m_segmentsX;  // Step along X axis
-    float stepZ = 2.0f / m_segmentsY;         // Step along Z axis (heart height)
+//     float stepAngleX = 360.0f / m_segmentsX;  // Step along X axis
+//     float stepZ = 2.0f / m_segmentsY;         // Step along Z axis (heart height)
 
-    // Generate heart shape in the XY plane and extrude along the Z axis
-    for (int i = 0; i <= m_segmentsY; ++i) {
-        float z = -1.0f + i * stepZ;  // Height of the current section (normalized)
+//     // Generate heart shape in the XY plane and extrude along the Z axis
+//     for (int i = 0; i <= m_segmentsY; ++i) {
+//         float z = -1.0f + i * stepZ;  // Height of the current section (normalized)
 
-        for (int j = 0; j < m_segmentsX; ++j) {
-            float t = glm::radians(j * stepAngleX);
-            float x = 16.0f * glm::pow(glm::sin(t), 3);
-            float y = 13.0f * glm::cos(t) - 5.0f * glm::cos(2 * t) - 2.0f * glm::cos(3 * t) - glm::cos(4 * t);
+//         for (int j = 0; j < m_segmentsX; ++j) {
+//             float t = glm::radians(j * stepAngleX);
+//             float x = 16.0f * glm::pow(glm::sin(t), 3);
+//             float y = 13.0f * glm::cos(t) - 5.0f * glm::cos(2 * t) - 2.0f * glm::cos(3 * t) - glm::cos(4 * t);
 
-            glm::vec3 position(x * 0.05f, y * 0.05f, z * radius);  // Scale down and add z-axis offset
+//             glm::vec3 position(x * 0.05f, y * 0.05f, z * radius);  // Scale down and add z-axis offset
 
-            Vertex* v = new Vertex(position);
-            heart->addVertex(v);
+//             Vertex* v = new Vertex(position);
+//             heart->addVertex(v);
 
-            // Back(z = -1)
-            if (i == 0)
-            {
-                backHeart->addVertex(new Vertex(v->getPos()));
-            }
-            // Front(z = 1)
-            else if (i == m_segmentsY)
-            {
-                frontHeart->addVertex(new Vertex(v->getPos()));
-            }
+//             // Back(z = -1)
+//             if (i == 0)
+//             {
+//                 backHeart->addVertex(new Vertex(v->getPos()));
+//             }
+//             // Front(z = 1)
+//             else if (i == m_segmentsY)
+//             {
+//                 frontHeart->addVertex(new Vertex(v->getPos()));
+//             }
             
-        }
-    }
+//         }
+//     }
 
-    glm::vec3 topPosition(0.0f, 0.0f, 0.7f);
-    glm::vec3 bottomPosition(0.0f, 0.0f, -0.7f);
-    Vertex* topv = new Vertex(topPosition);
-    Vertex* bottomv = new Vertex(bottomPosition);
+//     glm::vec3 topPosition(0.0f, 0.0f, 0.7f);
+//     glm::vec3 bottomPosition(0.0f, 0.0f, -0.7f);
+//     Vertex* topv = new Vertex(topPosition);
+//     Vertex* bottomv = new Vertex(bottomPosition);
 
-    int backIndex = backHeart->getVertices().size();
-    int frontIndex = frontHeart->getVertices().size();
+//     int backIndex = backHeart->getVertices().size();
+//     int frontIndex = frontHeart->getVertices().size();
 
-    backHeart->addVertex(bottomv);
-    frontHeart->addVertex(topv);
+//     backHeart->addVertex(bottomv);
+//     frontHeart->addVertex(topv);
 
-    // Now connect vertices to form faces (triangles) between each layer
-    std::vector<Vertex*> verts = heart->getVertices();
-    std::vector<Vertex*> backs = backHeart->getVertices();
-    std::vector<Vertex*> fronts = frontHeart->getVertices();
+//     // Now connect vertices to form faces (triangles) between each layer
+//     std::vector<Vertex*> verts = heart->getVertices();
+//     std::vector<Vertex*> backs = backHeart->getVertices();
+//     std::vector<Vertex*> fronts = frontHeart->getVertices();
 
-    for (int i = 0; i < m_segmentsY; ++i) {
-        for (int j = 0; j < m_segmentsX; ++j) {
-            int current = i * m_segmentsX + j;
-            int next = current + m_segmentsX;
-            int nextWrap = (j + 1) % m_segmentsX;
+//     for (int i = 0; i < m_segmentsY; ++i) {
+//         for (int j = 0; j < m_segmentsX; ++j) {
+//             int current = i * m_segmentsX + j;
+//             int next = current + m_segmentsX;
+//             int nextWrap = (j + 1) % m_segmentsX;
 
-            int currentNext = i * m_segmentsX + nextWrap;
-            int nextNext = currentNext + m_segmentsX;
+//             int currentNext = i * m_segmentsX + nextWrap;
+//             int nextNext = currentNext + m_segmentsX;
 
-            // Create two faces (triangles) between adjacent vertices
-            Face* f1 = new Face(verts[current], verts[next], verts[currentNext]);
-            Face* f2 = new Face(verts[currentNext], verts[next], verts[nextNext]);
+//             // Create two faces (triangles) between adjacent vertices
+//             Face* f1 = new Face(verts[current], verts[next], verts[currentNext]);
+//             Face* f2 = new Face(verts[currentNext], verts[next], verts[nextNext]);
 
-            heart->addFace(f1);
-            heart->addFace(f2);
+//             heart->addFace(f1);
+//             heart->addFace(f2);
 
-            // Back(z = -1)
-            if (i == 0)
-            {
-                Face* f3 = new Face(backs[backIndex], verts[current], verts[currentNext]);
-                backHeart->addFace(f3);
-            }
-            // Front(z = 1)
-            else if (i == m_segmentsY - 1)
-            {
-                Face* f4 = new Face(verts[nextNext], verts[next], fronts[frontIndex]);
-                backHeart->addFace(f4);
-            }
-        }
-    }
+//             // Back(z = -1)
+//             if (i == 0)
+//             {
+//                 Face* f3 = new Face(backs[backIndex], verts[current], verts[currentNext]);
+//                 backHeart->addFace(f3);
+//             }
+//             // Front(z = 1)
+//             else if (i == m_segmentsY - 1)
+//             {
+//                 Face* f4 = new Face(verts[nextNext], verts[next], fronts[frontIndex]);
+//                 backHeart->addFace(f4);
+//             }
+//         }
+//     }
 
-    this->graphs.push_back(heart);
-    this->graphs.push_back(backHeart);
-    this->graphs.push_back(frontHeart);
-    for (Mesh* g : this->graphs){
-        g->calculateVertexNormal();
-    }
+//     this->graphs.push_back(heart);
+//     this->graphs.push_back(backHeart);
+//     this->graphs.push_back(frontHeart);
+//     for (Mesh* g : this->graphs){
+//         g->calculateVertexNormal();
+//     }
 
 
-    // std::cout << "Vertices count: " << heart->getVertices().size() << std::endl;
-    // std::cout << "Faces count: " << heart->getFaces().size() << std::endl;
+//     // std::cout << "Vertices count: " << heart->getVertices().size() << std::endl;
+//     // std::cout << "Faces count: " << heart->getFaces().size() << std::endl;
 }

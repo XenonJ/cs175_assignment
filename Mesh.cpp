@@ -3,63 +3,59 @@
 
 // TODO: same vertex should not be added?
 void Mesh::addVertex(Vertex* v) {
-    vertices.push_back(v);
+    vertices[lastV] = v;
+    lastV++;
 }
 
 // TODO: not using edges for now
 void Mesh::addEdge(Edge* e) {
-    edges.push_back(e);
+
 }
 
 void Mesh::addFace(Face* f) {
-    faces.push_back(f);
-    Vertex* const* vertices = f->getVertices();
-    for (int i = 0; i < 3; i++) {
-        vertices[i]->addFace(f);
-    }
+    faces[lastF] = f;
+    lastF++;
 }
 
-std::vector<Vertex*>& Mesh::getVertices() {
+Vertex** Mesh::getVertices() {
     return vertices;
 }
 
 // TODO: improve speed
 Vertex* Mesh::getVertexAt(glm::vec3 pos) {
-    for (auto v : vertices) {
+    for (int i = 0; i < lastV; i++) {
         float epsilon = 1e-6f;
-        if ((std::fabs(v->getPos().x - pos.x) < epsilon) &&
-           (std::fabs(v->getPos().y - pos.y) < epsilon) &&
-           (std::fabs(v->getPos().z - pos.z) < epsilon) ) {
-            return v;
+        if ((std::fabs(vertices[i]->getPos().x - pos.x) < epsilon) &&
+           (std::fabs(vertices[i]->getPos().y - pos.y) < epsilon) &&
+           (std::fabs(vertices[i]->getPos().z - pos.z) < epsilon) ) {
+            return vertices[i];
         }
     }
     return nullptr;
 }
 
 // TODO: not using edges for now
-std::vector<Edge*>& Mesh::getEdges() {
+Edge** Mesh::getEdges() {
     return edges;
 }
 
-std::vector<Face*>& Mesh::getFaces() {
+Face** Mesh::getFaces() {
     return faces;
 }
 
 void Mesh::clear() {
-    for (auto v : vertices) {
-        delete v;
+    for (int i = 0; i < lastV; i++) {
+        delete vertices[i];
     }
-    for (auto e : edges) {
-        delete e;
+    for (int i = 0; i < lastF; i++) {
+        delete faces[i];
     }
-    for (auto f : faces) {
-        delete f;
-    }
-    vertices.clear();
-    edges.clear();
-    faces.clear();
+    delete vertices;
+    delete edges;
+    delete faces;
 }
 
+/*
 void Mesh::calculateVertexNormal() {
     for (auto v : vertices) {
         glm::vec3 normal(0.0f, 0.0f, 0.0f);
@@ -158,3 +154,4 @@ int Mesh::convertVec3ToInt(glm::vec3 vec) {
 
     return (scaledX * 100000000) + (scaledY * 10000) + scaledZ;
 }
+*/

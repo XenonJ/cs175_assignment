@@ -18,7 +18,7 @@ void Sphere::drawTriangleMeshFromFaces(){
     glBegin(GL_TRIANGLES);
 
     for (Mesh* g : this->graphs){
-        for (Face* face : g->getFaces()) {
+        for (Face* face : *g->getFaceIterator()) {
                 Vertex* const* verts = face->getVertices();
                 for (int i = 0; i < 3; i++)
                 {
@@ -78,7 +78,7 @@ void Sphere::drawNormal() {
 
     glBegin(GL_LINES);
     for (Mesh* g : this->graphs){
-        for (Vertex *v : g->getVertices()){
+        for (Vertex *v : *g->getVertexIterator()){
             const glm::vec3 &normal = v->getNormals();
             const glm::vec3 &pos = (v->getPos());
             
@@ -194,6 +194,6 @@ void Sphere::calculate() {
     this->graphs.push_back(sphere);
 
     // Optional: Output vertex and face counts
-    std::cout << "Vertices count: " << sphere->getVertices().size() << std::endl;
-    std::cout << "Faces count: " << sphere->getFaces().size() << std::endl;
+    // std::cout << "Vertices count: " << sphere->getVertices().size() << std::endl;
+    // std::cout << "Faces count: " << sphere->getFaces().size() << std::endl;
 }

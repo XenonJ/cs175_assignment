@@ -17,7 +17,7 @@ void Cube::drawTriangleMeshFromFaces() {
     glBegin(GL_TRIANGLES);
 
     for (Mesh* g : this->graphs) {
-        for (Face* face : g->getFaces()) {
+        for (Face* face : *g->getFaceIterator()) {
             Vertex* const* verts = face->getVertices();
             for (int i = 0; i < 3; i++)
             {
@@ -133,7 +133,7 @@ void Cube::drawNormal() {
 void Cube::drawNormalForSingleFace() {
     glBegin(GL_LINES);
     for (Mesh* g : this->graphs) {
-        for (Vertex* v : g->getVertices()) {
+        for (Vertex* v : *g->getVertexIterator()) {
             const glm::vec3& normal = v->getNormals();
             const glm::vec3& pos = (v->getPos());
 

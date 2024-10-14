@@ -15,15 +15,15 @@ class Vertex {
 private:
     glm::vec3 position;
     glm::vec3 normal;
-    std::vector<Face*> faces;
+    // std::vector<Face*> faces;
 public:
     Vertex(glm::vec3 pos) { position = pos; };
     ~Vertex() { };
     glm::vec3 getPos() { return position; };
     void setNormal(glm::vec3 norm) { normal = norm; };
     glm::vec3 getNormals() { return normal; };
-    void addFace(Face* f) { faces.push_back(f); };
-    std::vector<Face*> getFaces() { return faces; };
+    // void addFace(Face* f) { faces.push_back(f); };
+    // std::vector<Face*> getFaces() { return faces; };
 };
 
 class Edge {
@@ -60,26 +60,52 @@ public:
 
 class Mesh {
 private:
-    std::vector<Vertex*> vertices;
-    std::vector<Edge*> edges;
-    std::vector<Face*> faces;
+    Vertex** vertices;
+    Edge** edges;
+    Face** faces;
+    int lastV;
+    int lastF;
 public:
     Mesh() { };
-    Mesh(int vcount, int fcount) { vertices.reserve(vcount); faces.reserve(fcount); };
+    Mesh(int vcount, int fcount) { vertices = new Vertex*[vcount]; faces = new Face*[fcount]; lastV = 0; lastF = 0; };
     ~Mesh() { clear(); };
     void addVertex(Vertex* v);
     void addEdge(Edge* e);
     void addFace(Face* f);
-    std::vector<Vertex*>& getVertices();
+    Vertex** getVertices();
     Vertex* getVertexAt(glm::vec3 pos);
-    std::vector<Edge*>& getEdges();
-    std::vector<Face*>& getFaces();
+    Edge** getEdges();
+    Face** getFaces();
     void clear();
-    void calculateVertexNormal();
-    Mesh* rotate(float angle_x, float angle_y, float angle_z);
-    Mesh* transform(glm::mat4 transformation);
-    static Mesh* union_graph(std::vector<Mesh*>& graphs);
-    static int convertVec3ToInt(glm::vec3 vec);
+    class MeshVertexIterator {
+    private:
+        Mesh* m;
+    public:
+        MeshVertexIterator(Mesh* m) { this->m = m; };
+        ~MeshVertexIterator() { };
+        Vertex** begin() const { return this->m->beginV(); };
+        Vertex** end() const { return this->m->endV(); };
+    };
+    MeshVertexIterator* getVertexIterator() { return new MeshVertexIterator(this); };
+    class MeshFaceIterator {
+    private:
+        Mesh* m;
+    public:
+        MeshFaceIterator(Mesh* m) { this->m = m; };
+        ~MeshFaceIterator() { };
+        Face** begin() const { return this->m->beginF(); };
+        Face** end() const { return this->m->endF(); };
+    };
+    MeshFaceIterator* getFaceIterator() { return new MeshFaceIterator(this); };
+    Vertex** beginV() const { return vertices; };
+    Vertex** endV() const { return vertices + lastV; };
+    Face** beginF() const { return faces; };
+    Face** endF() const { return faces + lastF; };
+    // void calculateVertexNormal();
+    // Mesh* rotate(float angle_x, float angle_y, float angle_z);
+    // Mesh* transform(glm::mat4 transformation);
+    // static Mesh* union_graph(std::vector<Mesh*>& graphs);
+    // static int convertVec3ToInt(glm::vec3 vec);
     // void drawTriangleMeshFromFaces();
     // void drawNormalsFromFaces();
 };
