@@ -19,7 +19,7 @@ void Cone::drawTriangleMeshFromFaces(){
     glBegin(GL_TRIANGLES);
 
     for (Mesh* g : this->graphs){
-        for (Face* face : g->getFaces()) {
+        for (Face* face : *g->getFaceIterator()) {
                 Vertex* const* verts = face->getVertices();
                 for (int i = 0; i < 3; i++)
                 {
@@ -47,25 +47,25 @@ void Cone::drawTriangleMeshFromFaces(){
     
 
 void Cone::drawNormalsFromFaces(){
-    glColor3f(1.0f, .0f, .0f);
-    glBegin(GL_LINES);
-    for (Face &face : Faces) {
-        Vertex *const *verts      = face.getVertices();
-        glm::vec3      v0Pos      = verts[0]->getPos();
-        glm::vec3      v1Pos      = verts[1]->getPos();
-        glm::vec3      v2Pos      = verts[2]->getPos();
-        glm::vec3      v1v0       = glm::normalize(v1Pos - v0Pos);
-        glm::vec3      v2v0       = glm::normalize(v2Pos - v0Pos);
-        glm::vec3      faceNormal = glm::normalize(glm::cross(v1v0, v2v0));
+    // glColor3f(1.0f, .0f, .0f);
+    // glBegin(GL_LINES);
+    // for (Face &face : Faces) {
+    //     Vertex *const *verts      = face.getVertices();
+    //     glm::vec3      v0Pos      = verts[0]->getPos();
+    //     glm::vec3      v1Pos      = verts[1]->getPos();
+    //     glm::vec3      v2Pos      = verts[2]->getPos();
+    //     glm::vec3      v1v0       = glm::normalize(v1Pos - v0Pos);
+    //     glm::vec3      v2v0       = glm::normalize(v2Pos - v0Pos);
+    //     glm::vec3      faceNormal = glm::normalize(glm::cross(v1v0, v2v0));
 
-        for (int i = 0; i < 3; ++i) {
-            const glm::vec3 &pos = (verts[i]->getPos());
-            glVertex3f(pos.x, pos.y, pos.z);
-            glVertex3f(pos.x + faceNormal.x * .1f, pos.y + faceNormal.y * .1f,
-                       pos.z + faceNormal.z * .1f);
-        }
-    }
-    glEnd();
+    //     for (int i = 0; i < 3; ++i) {
+    //         const glm::vec3 &pos = (verts[i]->getPos());
+    //         glVertex3f(pos.x, pos.y, pos.z);
+    //         glVertex3f(pos.x + faceNormal.x * .1f, pos.y + faceNormal.y * .1f,
+    //                    pos.z + faceNormal.z * .1f);
+    //     }
+    // }
+    // glEnd();
 }
 
 
@@ -80,7 +80,7 @@ void Cone::drawNormal() {
 
     glBegin(GL_LINES);
     for (Mesh* g : this->graphs){
-        for (Vertex *v : g->getVertices()){
+        for (Vertex *v : *g->getVertexIterator()){
             const glm::vec3 &normal = v->getNormals();
             const glm::vec3 &pos = (v->getPos());
             
@@ -93,11 +93,11 @@ void Cone::drawNormal() {
 }
 
 void Cone::calculate() {
-    int vcount = m_segmentsX * (m_segmentsY + 1);
-    int fcount = m_segmentsX * m_segmentsY * 2;
+    int vcount = (m_segmentsX + 1) * (m_segmentsY + 1);
+    int fcount = m_segmentsX  * (m_segmentsY + 1) * 2;
     // Create a new mesh to store the cone
     Mesh* side = new Mesh(vcount, fcount);
-    Mesh* bottom = new Mesh(m_segmentsX, m_segmentsX);
+    Mesh* bottom = new Mesh(m_segmentsX + 1, m_segmentsX + 1);
     this->clearGraphs();
 
     float stepAngle = 2.0f * glm::pi<float>() / m_segmentsX;  // 360 degrees divided by segmentsX
@@ -105,8 +105,6 @@ void Cone::calculate() {
 
     float height = 1.0f;  // Total height of the cone
     float radius = 0.5f;  // Base radius of the cone
-
-    std::vector<Vertex*> tempVerts;  // Store all vertices for easy access
 
     // Generate vertices for the side mesh, based on segmentY and segmentX
     for (int i = 0; i <= m_segmentsY; i++) {
@@ -145,7 +143,6 @@ void Cone::calculate() {
 
             
             side->addVertex(v);
-            tempVerts.push_back(v);  // Store vertex in tempVerts
         }
     }
 
@@ -154,6 +151,7 @@ void Cone::calculate() {
     Vertex* topVertex = new Vertex(topVertexPos);
     side->addVertex(topVertex);
     
+    Vertex** verts = side->getVertices();
     // Generate side faces using index-based method
     for (int i = 0; i < m_segmentsY; ++i) {
         for (int j = 0; j < m_segmentsX; ++j) {
@@ -167,8 +165,8 @@ void Cone::calculate() {
             if (j == m_segmentsX - 1) index4 = (i + 1) * m_segmentsX;  // Wrap around
 
             // Create two faces for each segment
-            Face* f1 = new Face(tempVerts[index1], tempVerts[index3], tempVerts[index4]);
-            Face* f2 = new Face(tempVerts[index4], tempVerts[index2], tempVerts[index1]);
+            Face* f1 = new Face(verts[index1], verts[index3], verts[index4]);
+            Face* f2 = new Face(verts[index4], verts[index2], verts[index1]);
 
             side->addFace(f1);
             side->addFace(f2);
@@ -181,7 +179,7 @@ void Cone::calculate() {
         int index2 = m_segmentsY * m_segmentsX + (j + 1) % m_segmentsX;  // Wrap around
 
         // Create a face that connects the top vertex to the last ring
-        Face* f = new Face(tempVerts[index1], topVertex, tempVerts[index2]);
+        Face* f = new Face(verts[index1], topVertex, verts[index2]);
         side->addFace(f);
     }
 
@@ -196,7 +194,7 @@ void Cone::calculate() {
         int index1 = j;
         int index2 = (j + 1) % m_segmentsX;  // Wrap around
 
-        Face* bottomFace = new Face(bottomVertex, tempVerts[index2], tempVerts[index1]);
+        Face* bottomFace = new Face(bottomVertex, verts[index2], verts[index1]);
         bottom->addFace(bottomFace);
     }
 
@@ -210,11 +208,11 @@ void Cone::calculate() {
     // }
 
     // Optional: Print total number of vertices and faces
-    int verticesSize = 0, facesSize = 0;
-    for (Mesh* g : this->graphs) {
-        verticesSize += g->getVertices().size();
-        facesSize += g->getFaces().size();
-    }
-    std::cout << "Vertices count: " << verticesSize << std::endl;
-    std::cout << "Faces count: " << facesSize << std::endl;
+    // int verticesSize = 0, facesSize = 0;
+    // for (Mesh* g : this->graphs) {
+    //     verticesSize += g->getVertices().size();
+    //     facesSize += g->getFaces().size();
+    // }
+    // std::cout << "Vertices count: " << verticesSize << std::endl;
+    // std::cout << "Faces count: " << facesSize << std::endl;
 }

@@ -14,7 +14,7 @@ void Cylinder::drawTriangleMeshFromFaces() {
     glBegin(GL_TRIANGLES);
 
     for (Mesh* g : this->graphs) {
-        for (Face* face : g->getFaces()) {
+        for (Face* face : *g->getFaceIterator()) {
             Vertex* const* verts = face->getVertices();
             for (int i = 0; i < 3; i++)
             {
@@ -46,7 +46,7 @@ void Cylinder::drawNormal() {
 
     glBegin(GL_LINES);
     for (Mesh* g : this->graphs) {
-        for (Vertex* v : g->getVertices()) {
+        for (Vertex* v : *g->getVertexIterator()) {
             const glm::vec3& normal = v->getNormals();
             const glm::vec3& pos = (v->getPos());
 
@@ -63,8 +63,8 @@ void Cylinder::calculate() {
     int fcount = m_segmentsX * m_segmentsY * 2;
     //  Create a new graph to store the side shape
     Mesh* side = new Mesh(vcount, fcount);
-    Mesh* topFace = new Mesh(m_segmentsX, m_segmentsX);
-    Mesh* bottomFace = new Mesh(m_segmentsX, m_segmentsX);
+    Mesh* topFace = new Mesh(m_segmentsX + 1, m_segmentsX + 1);
+    Mesh* bottomFace = new Mesh(m_segmentsX + 1, m_segmentsX + 1);
 
     this->clearGraphs();
 
@@ -113,7 +113,7 @@ void Cylinder::calculate() {
     }
 
     // Get the vertices list for calculating the face 
-    std::vector<Vertex*> verts = side->getVertices();
+    Vertex** verts = side->getVertices();
     // Add all side face to side shape
     for (int i = 0; i < m_segmentsY; ++i) {
         for (int j = 0; j < m_segmentsX; ++j) {
@@ -124,15 +124,15 @@ void Cylinder::calculate() {
 
             Face* f1 = new Face(verts[index1], verts[index3], verts[index4]);
 
-            verts[index1]->addFace(f1);
-            verts[index3]->addFace(f1);
-            verts[index4]->addFace(f1);
+            // verts[index1]->addFace(f1);
+            // verts[index3]->addFace(f1);
+            // verts[index4]->addFace(f1);
 
             Face* f2 = new Face(verts[index4], verts[index2], verts[index1]);
 
-            verts[index4]->addFace(f2);
-            verts[index2]->addFace(f2);
-            verts[index1]->addFace(f2);
+            // verts[index4]->addFace(f2);
+            // verts[index2]->addFace(f2);
+            // verts[index1]->addFace(f2);
 
             side->addFace(f1);
             side->addFace(f2);
@@ -143,13 +143,13 @@ void Cylinder::calculate() {
     glm::vec3 topCenter(0, 1.0f - radius, 0);
     glm::vec3 bottomCenter(0, -radius, 0);
 
-    int topCenterIndex = this->vertices.size();
+    // int topCenterIndex = this->vertices.size();
     glm::vec3 topNormal = glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f));
     Vertex* top = new Vertex(topCenter);
     top->setNormal(topNormal);
     topFace->addVertex(top);
 
-    int bottomCenterIndex = this->vertices.size();
+    // int bottomCenterIndex = this->vertices.size();
     glm::vec3 bottomNormal = glm::normalize(glm::vec3(0.0f, -1.0f, 0.0f));
     Vertex* bottom = new Vertex(bottomCenter);
     bottom->setNormal(bottomNormal);
@@ -159,8 +159,8 @@ void Cylinder::calculate() {
 
     // Calculate and add the top and bottom face
 
-    std::vector<Vertex*> topVertices = topFace->getVertices();
-    std::vector<Vertex*> bottomVertices = bottomFace->getVertices();
+    Vertex** topVertices = topFace->getVertices();
+    Vertex** bottomVertices = bottomFace->getVertices();
 
     for (int i = 0; i < m_segmentsX; i++)
     {
@@ -184,12 +184,12 @@ void Cylinder::calculate() {
     this->graphs.push_back(bottomFace);
 
     // Print total size
-    int verticesSize = 0, facesSize = 0;
-    for (Mesh* g : this->graphs)
-    {
-        verticesSize += g->getVertices().size();
-        facesSize += g->getFaces().size();
-    }
+    // int verticesSize = 0, facesSize = 0;
+    // for (Mesh* g : this->graphs)
+    // {
+    //     verticesSize += g->getVertices().size();
+    //     facesSize += g->getFaces().size();
+    // }
 
 
 
