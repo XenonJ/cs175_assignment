@@ -15,15 +15,15 @@ class Vertex {
 private:
     glm::vec3 position;
     glm::vec3 normal;
-    // std::vector<Face*> faces;
+    std::vector<Face*> faces;
 public:
     Vertex(glm::vec3 pos) { position = pos; };
     ~Vertex() { };
     glm::vec3 getPos() { return position; };
     void setNormal(glm::vec3 norm) { normal = norm; };
     glm::vec3 getNormals() { return normal; };
-    // void addFace(Face* f) { faces.push_back(f); };
-    // std::vector<Face*> getFaces() { return faces; };
+    void addFace(Face* f) { faces.push_back(f); };
+    std::vector<Face*> getFaces() { return faces; };
 };
 
 class Edge {
@@ -101,13 +101,13 @@ public:
     Vertex** endV() const { return vertices + lastV; };
     Face** beginF() const { return faces; };
     Face** endF() const { return faces + lastF; };
-    // void calculateVertexNormal();
-    // Mesh* rotate(float angle_x, float angle_y, float angle_z);
-    // Mesh* transform(glm::mat4 transformation);
-    // static Mesh* union_graph(std::vector<Mesh*>& graphs);
-    // static int convertVec3ToInt(glm::vec3 vec);
-    // void drawTriangleMeshFromFaces();
-    // void drawNormalsFromFaces();
+    void calculateVertexNormal();
+    Mesh* rotate(float angle_x, float angle_y, float angle_z);
+    Mesh* transform(glm::mat4 transformation);
+    static Mesh* union_graph(std::vector<Mesh*>& graphs);
+    static int convertVec3ToInt(glm::vec3 vec);
+    void drawTriangleMeshFromFaces();
+    void drawNormalsFromFaces();
 };
 
 #endif

@@ -55,19 +55,18 @@ void Mesh::clear() {
     delete faces;
 }
 
-/*
 void Mesh::calculateVertexNormal() {
-    for (auto v : vertices) {
+    for (int i = 0; i < lastV; i++) {
         glm::vec3 normal(0.0f, 0.0f, 0.0f);
         std::unordered_map<int, bool> mp;
-        for (auto f : v->getFaces()) {
+        for (auto f : vertices[i]->getFaces()) {
             if (!mp[convertVec3ToInt(f->getFaceNormal())]) {
                 normal += f->getFaceNormal();
                 mp[convertVec3ToInt(f->getFaceNormal())] = true;
             }
         }
         normal = glm::normalize(normal);
-        v->setNormal(normal);
+        vertices[i]->setNormal(normal);
     }
 }
 
@@ -86,25 +85,25 @@ Mesh* Mesh::transform(glm::mat4 transformation) {
 
     // store the relation between old and new vertex
     std::unordered_map<Vertex*, Vertex*> vertexMap;
-    for (auto v : vertices) {
-        glm::vec3 newPos = glm::vec3(transformation * glm::vec4(v->getPos(), 1.0f));
-        glm::vec3 newNormal = glm::normalize(glm::vec3(transformation * glm::vec4(v->getNormals(), 0.0f)));
+    for (int i = 0; i < lastV; i++) {
+        glm::vec3 newPos = glm::vec3(transformation * glm::vec4(vertices[i]->getPos(), 1.0f));
+        glm::vec3 newNormal = glm::normalize(glm::vec3(transformation * glm::vec4(vertices[i]->getNormals(), 0.0f)));
         Vertex* newVertex = new Vertex(newPos);
         newVertex->setNormal(newNormal);
-        vertexMap[v] = newVertex;
+        vertexMap[vertices[i]] = newVertex;
         ret->addVertex(newVertex);
     }
 
-    for (auto e : edges) {
-        Edge* newEdge = new Edge(vertexMap[e->getSrc()], vertexMap[e->getDes()]);
-        ret->addEdge(newEdge);
-    }
+    // for (auto e : edges) {
+    //     Edge* newEdge = new Edge(vertexMap[e->getSrc()], vertexMap[e->getDes()]);
+    //     ret->addEdge(newEdge);
+    // }
 
-    for (auto f : faces) {
-        Face* newFace = new Face(vertexMap[f->getVertices()[0]], vertexMap[f->getVertices()[1]], vertexMap[f->getVertices()[2]]);
+    for (int i = 0; i < lastF; i++) {
+        Face* newFace = new Face(vertexMap[faces[i]->getVertices()[0]], vertexMap[faces[i]->getVertices()[1]], vertexMap[faces[i]->getVertices()[2]]);
         ret->addFace(newFace);
         for (int i = 0; i < 3; i++) {
-            vertexMap[f->getVertices()[i]]->addFace(newFace);
+            vertexMap[faces[i]->getVertices()[i]]->addFace(newFace);
         }
     }
 
@@ -117,7 +116,7 @@ Mesh* Mesh::union_graph(std::vector<Mesh*>& graphs) {
     std::unordered_map<int, Vertex*> vertexMap;
 
     for (auto g : graphs) {
-        for (auto v : g->getVertices()) {
+        for (auto v : *g->getVertexIterator()) {
             if (vertexMap.find(convertVec3ToInt(v->getPos())) != vertexMap.end()) {
                 continue;
             }
@@ -127,10 +126,10 @@ Mesh* Mesh::union_graph(std::vector<Mesh*>& graphs) {
                 vertexMap[convertVec3ToInt(v->getPos())] = newVertex;
             }
         }
-        for (auto e : g->getEdges()) {
-            ret->addEdge(new Edge(vertexMap[convertVec3ToInt(e->getSrc()->getPos())], vertexMap[convertVec3ToInt(e->getDes()->getPos())]));
-        }
-        for (auto f : g->getFaces()) {
+        // for (auto e : g->getEdges()) {
+        //     ret->addEdge(new Edge(vertexMap[convertVec3ToInt(e->getSrc()->getPos())], vertexMap[convertVec3ToInt(e->getDes()->getPos())]));
+        // }
+        for (auto f : *g->getFaceIterator()) {
             Face* newFace = new Face(
                 vertexMap[convertVec3ToInt(f->getVertices()[0]->getPos())],
                 vertexMap[convertVec3ToInt(f->getVertices()[1]->getPos())],
@@ -154,4 +153,3 @@ int Mesh::convertVec3ToInt(glm::vec3 vec) {
 
     return (scaledX * 100000000) + (scaledY * 10000) + scaledZ;
 }
-*/
