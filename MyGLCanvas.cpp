@@ -128,7 +128,7 @@ void MyGLCanvas::loadSceneFile(const char* filenamePath) {
 
 void MyGLCanvas::flatSceneData() {
     flatSceneDataRec(parser->getRootNode(), glm::mat4(1.0f));
-    this->scene->calculate();
+    // this->scene->calculate();ß
 }
 
 void MyGLCanvas::flatSceneDataRec(SceneNode* node, glm::mat4 curMat) {
