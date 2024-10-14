@@ -95,8 +95,8 @@ void Special1::calculate() {
     int fcount = m_segmentsX * m_segmentsY * 2;
    // Create a new graph to store the heart surface
     Mesh* heart = new Mesh(vcount, fcount);
-    Mesh* frontHeart= new Mesh(m_segmentsX + 1, m_segmentsX * 2);
-    Mesh* backHeart = new Mesh(m_segmentsX + 1, m_segmentsX * 2);
+    Mesh* frontHeart= new Mesh(m_segmentsX + 1, m_segmentsX);
+    Mesh* backHeart = new Mesh(m_segmentsX + 1, m_segmentsX);
 
     this->clearGraphs();
 
@@ -173,7 +173,7 @@ void Special1::calculate() {
             else if (i == m_segmentsY - 1)
             {
                 Face* f4 = new Face(verts[nextNext], verts[next], fronts[frontIndex]);
-                backHeart->addFace(f4);
+                frontHeart->addFace(f4);
             }
         }
     }
