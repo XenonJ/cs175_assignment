@@ -62,7 +62,7 @@ private:
 	void drawScene();
 	void drawObject(OBJ_TYPE type);
 	void drawAxis();
-	void drawWireframe(SceneNode* node);
+	void drawWireframe();
 
 	int handle(int);
 	void resize(int x, int y, int w, int h);
