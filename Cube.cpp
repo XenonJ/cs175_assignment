@@ -41,7 +41,48 @@ void Cube::drawTriangleMeshFromFaces() {
 }
 
 void Cube::draw() {
+    // Define transformation matrices (in draw, using glTranslatef and glRotatef)
+    glPushMatrix();
+
+    // Front face
+    glTranslatef(0.0f, 0.0f, 0.5f);  // Move front face to z = 0.5
     drawTriangleMeshFromFaces();
+    glPopMatrix();
+
+    glPushMatrix();
+    // Back face
+    glTranslatef(0.0f, 0.0f, -0.5f);  // Move back face to z = -0.5
+    glRotatef(180.0f, 1.0f, 0.0f, 0.0f);  // Rotate back face by 180 degrees along x-axis
+    drawTriangleMeshFromFaces();
+    glPopMatrix();
+
+    glPushMatrix();
+    // Right face
+    glTranslatef(0.5f, 0.0f, 0.0f);  // Move right face to x = 0.5
+    glRotatef(90.0f, 0.0f, 1.0f, 0.0f);  // Rotate right face by 90 degrees along y-axis
+    drawTriangleMeshFromFaces();
+    glPopMatrix();
+
+    glPushMatrix();
+    // Left face
+    glTranslatef(-0.5f, 0.0f, 0.0f);  // Move left face to x = -0.5
+    glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);  // Rotate left face by -90 degrees along y-axis
+    drawTriangleMeshFromFaces();
+    glPopMatrix();
+
+    glPushMatrix();
+    // Bottom face
+    glTranslatef(0.0f, -0.5f, 0.0f);  // Move bottom face to y = -0.5
+    glRotatef(90.0f, 1.0f, 0.0f, 0.0f);  // Rotate bottom face by 90 degrees along x-axis
+    drawTriangleMeshFromFaces();
+    glPopMatrix();
+
+    glPushMatrix();
+    // Top face
+    glTranslatef(0.0f, 0.5f, 0.0f);  // Move top face to y = 0.5
+    glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);  // Rotate top face by -90 degrees along x-axis
+    drawTriangleMeshFromFaces();
+    glPopMatrix();
 }
 
 void Cube::drawNormal() {
@@ -94,26 +135,26 @@ void Cube::calculate() {
         }
     }
 
-    glm::mat4 Matrics[6];
-    Matrics[0] = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.5f));
-    Matrics[1] = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -0.5f)) *
-            glm::rotate(glm::mat4(1.0f), glm::radians(180.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    Matrics[2] = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0.0f)) *
-            glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    Matrics[3] = glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.0f, 0.0f)) *
-            glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    Matrics[4] = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.5f, 0.0f)) *
-            glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    Matrics[5] = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, 0.0f)) *
-            glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    // glm::mat4 Matrics[6];
+    // Matrics[0] = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.5f));
+    // Matrics[1] = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -0.5f)) *
+    //         glm::rotate(glm::mat4(1.0f), glm::radians(180.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    // Matrics[2] = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0.0f)) *
+    //         glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    // Matrics[3] = glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.0f, 0.0f)) *
+    //         glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    // Matrics[4] = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -0.5f, 0.0f)) *
+    //         glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    // Matrics[5] = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.5f, 0.0f)) *
+    //         glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
     this->clearGraphs();
-    for (int i = 0; i < 6; i++) {
-        this->graphs.push_back(g->transform(Matrics[i]));
-    }
+    // for (int i = 0; i < 6; i++) {
+        this->graphs.push_back(g);
+    // }
     for (Mesh* g : this->graphs){
         g->calculateVertexNormal();
     }
-    delete g;
+    // delete g;
 
 }
