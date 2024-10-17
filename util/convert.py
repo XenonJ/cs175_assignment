@@ -72,7 +72,7 @@ def format_xform_to_xml(xform_data):
     for xform in xform_data:
         # Extract the scale values and format them
         scale_values = xform['scale'].strip('()').split(',')
-        scale_str = f'<scale x="{eval(scale_values[0].strip())/10}" y="{eval(scale_values[1].strip())/10}" z="{eval(scale_values[2].strip())/10}"/>'
+        scale_str = f'<scale x="{scale_values[0].strip()}" y="{scale_values[1].strip()}" z="{scale_values[2].strip()}"/>'
 
         # Extract the translate values and format them
         translate_values = xform['translate'].strip('()').split(',')
