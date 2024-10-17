@@ -1,0 +1,164 @@
+<scenefile>
+    <globaldata>
+        <diffusecoeff v="0.6"/>
+        <specularcoeff v="0.4"/>
+        <ambientcoeff v="0.5"/>
+    </globaldata>
+
+    <cameradata>
+        <pos x="4" y="4" z="8"/>
+        <focus x="0" y="0" z="0"/>
+        <up x="0" y="1" z="0"/>
+        <heightangle v="50"/>
+    </cameradata>
+
+    <!-- Multiple Lights to Enhance Different Areas -->
+    <lightdata>
+        <id v="0"/>
+        <color r="1" g="1" b="1"/>
+        <position x="5" y="5" z="5"/>
+    </lightdata>
+
+    <lightdata>
+        <id v="1"/>
+        <color r="0.9" g="0.8" b="1"/>
+        <position x="-4" y="3" z="4"/>
+    </lightdata>
+
+    <lightdata>
+        <id v="2"/>
+        <color r="1" g="0.8" b="0.8"/>
+        <position x="3" y="3" z="-5"/>
+    </lightdata>
+
+    <object type="tree" name="root">
+    <!-- Tree Trunk-->
+        <transblock>
+            <scale x="0.3" y="2" z="0.3"/>
+            <translate x="0" y="0.5" z="0"/>
+            <object type="primitive" name="cylinder">
+                <diffuse r="0.4" g="0.2" b="0.1"/>
+            </object>
+        </transblock>
+
+        <!-- Tree Layers (Cones) -->
+        <transblock>
+            <scale x="2" y="2" z="2"/>
+            <translate x="0" y="1" z="0"/>
+            <object type="primitive" name="cone">
+                <diffuse r="0" g="0.6" b="0"/>
+            </object>
+        </transblock>
+        <transblock>
+            <scale x="1.9" y="1.9" z="1.9"/>
+            <translate x="0" y="1.5" z="0"/>
+            <object type="primitive" name="cone">
+                <diffuse r="0" g="0.6" b="0"/>
+            </object>
+        </transblock>
+        <transblock>
+            <scale x="1.5" y="1.5" z="1.5"/>
+            <translate x="0" y="2" z="0"/>
+            <object type="primitive" name="cone">
+                <diffuse r="0" g="0.6" b="0"/>
+            </object>
+        </transblock>
+        <transblock>
+            <scale x="1.4" y="1.4" z="1.4"/>
+            <translate x="0" y="2.5" z="0"/>
+            <object type="primitive" name="cone">
+                <diffuse r="0" g="0.6" b="0"/>
+            </object>
+        </transblock>
+        <transblock>
+            <scale x="1.3" y="1.3" z="1.3"/>
+            <translate x="0" y="3" z="0"/>
+            <object type="primitive" name="cone">
+                <diffuse r="0" g="0.6" b="0"/>
+            </object>
+        </transblock>
+
+        <!-- Decorator Ornaments (Spheres) -->
+        <transblock>
+            <scale x="0.2" y="0.2" z="0.2"/>
+            <translate x="4.2" y="6" z="3.5"/>
+            <object type="primitive" name="sphere">
+                <diffuse r="1" g="0" b="0"/>
+            </object>
+        </transblock>
+
+
+
+        <transblock>
+            <scale x="0.2" y="0.2" z="0.2"/>
+            <translate x="-2.3" y="7.8" z="2.8"/>
+            <object type="primitive" name="sphere">
+                <diffuse r="0.4" g="1" b="0.3"/>
+            </object>
+        </transblock>
+
+        <transblock>
+            <scale x="0.2" y="0.2" z="0.2"/>
+            <translate x="2.2" y="11.3" z="5.2"/>
+            <object type="primitive" name="cube">
+                <diffuse r="0" g="1" b="1"/>
+            </object>
+        </transblock>
+        <transblock>
+            <scale x="0.2" y="0.2" z="0.2"/>
+            <translate x="3.5" y="8" z="1.8"/>
+            <object type="primitive" name="sphere">
+                <diffuse r="1" g="0.5" b="0.5"/>
+            </object>
+        </transblock>
+
+        <transblock>
+            <scale x="0.2" y="0.2" z="0.2"/>
+            <translate x="2.8" y="9" z="2.5"/>
+            <object type="primitive" name="sphere">
+                <diffuse r="0.3" g="0.8" b="0.8"/>
+            </object>
+        </transblock>
+
+        <transblock>
+            <scale x="0.2" y="0.2" z="0.2"/>
+            <translate x="3" y="10.5" z="-3.5"/>
+            <object type="primitive" name="cube">
+                <diffuse r="0.8" g="0.3" b="1"/>
+            </object>
+        </transblock>
+        <transblock>
+            <scale x="0.2" y="0.2" z="0.2"/>
+            <translate x="3.2" y="12.3" z="2.5"/>
+            <object type="primitive" name="sphere">
+                <diffuse r="0" g="0" b="1"/>
+            </object>
+        </transblock>
+
+
+        <transblock>
+            <scale x="0.2" y="0.2" z="0.2"/>
+            <translate x="-2.5" y="13" z="2"/>
+            <rotate x="0" y="1" z="1" angle="45"/>
+            <object type="primitive" name="cube">
+                <diffuse r="1" g="0.7" b="0.2"/>
+            </object>
+        </transblock>
+        <transblock>
+            <scale x="0.2" y="0.2" z="0.2"/>
+            <translate x="2.2" y="15.4" z="1.5"/>
+            <object type="primitive" name="sphere">
+                <diffuse r="1" g="1" b="0"/>
+            </object>
+        </transblock>
+        <transblock>
+            <scale x="0.2" y="0.2" z="0.2"/>
+            <translate x="2.9" y="15.5" z="5.2"/>
+            <object type="primitive" name="sphere">
+                <diffuse r="0" g="1.3" b="0.4"/>
+            </object>
+        </transblock>
+
+
+    </object>
+</scenefile>
