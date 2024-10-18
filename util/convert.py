@@ -72,22 +72,33 @@ def format_xform_to_xml(xform_data):
     for xform in xform_data:
         # Extract the scale values and format them
         scale_values = xform['scale'].strip('()').split(',')
-        scale_x = float(scale_values[0].strip()) / 3
-        scale_z = float(scale_values[1].strip()) / 3
-        scale_y = float(scale_values[2].strip()) / 3
+        scale_x = round(float(scale_values[0].strip()) / 3, 3)
+        scale_z = round(float(scale_values[1].strip()) / 3, 3)
+        scale_y = round(float(scale_values[2].strip()) / 3, 3)
+
+        scale_xI = round(1 / scale_x, 3)
+        scale_zI = round(1 / scale_z, 3)
+        scale_yI = round(1 / scale_y, 3)
         scale_str = f'<scale x="{scale_x}" y="{scale_y}" z="{scale_z}"/>'
+        scaleI_str = f'<scale x="{scale_xI}" y="{scale_yI}" z="{scale_zI}"/>'
+
 
         # Extract the translate values and format them
         translate_values = xform['translate'].strip('()').split(',')
-        translate_x = float(translate_values[0].strip()) / 3
-        translate_z = float(translate_values[1].strip()) / 3
-        translate_y = float(translate_values[2].strip()) / 3
+        translate_x = round(float(translate_values[0].strip()) / 3, 3)
+        translate_z = round(float(translate_values[1].strip()) / 3, 3)
+        translate_y = round(float(translate_values[2].strip()) / 3, 3)
         # Calculate new translate values as scale * (1 / translate)
-        new_translate_x = translate_x * (1 / (scale_x * 2)) if translate_x != 0 else 0
-        new_translate_z = translate_z * (1 / (scale_z * 2)) if translate_z != 0 else 0
-        new_translate_y = translate_y * (1 / (scale_y * 2)) if translate_y != 0 else 0
+        new_translate_x = round(translate_x * (1 / (scale_x * 2)), 3) if translate_x != 0 else 0
+        new_translate_z = round(translate_z * (1 / (scale_z * 2)), 3) if translate_z != 0 else 0
+        new_translate_y = round(translate_y * (1 / (scale_y * 2)), 3) if translate_y != 0 else 0
+        new_translate_xI = -new_translate_x
+        new_translate_zI = -new_translate_z
+        new_translate_yI = -new_translate_y
 
         translate_str = f'<translate x="{new_translate_x }" y="{new_translate_y}" z="{new_translate_z}"/>'
+        translateI_str = f'<translate x="{new_translate_xI }" y="{new_translate_yI}" z="{new_translate_zI}"/>'
+
 
         # Extract the rotation values and format multiple rotate blocks if necessary
         rotate_values = list(map(float, xform['rotateXYZ'].strip('()').split(',')))
@@ -113,7 +124,9 @@ def format_xform_to_xml(xform_data):
             '\t<transblock>\n'
             f'\t\t{scale_str}\n'
             f'\t\t{translate_str}\n'
+            f'\t\t{scaleI_str}\n'
             + ''.join([f'\t\t{rotate_str}\n' for rotate_str in rotate_strs]) +
+            f'\t\t{scale_str}\n'
             f'\t\t{object_str}\n'
             f'\t\t\t{diffuse_str}\n'
             '\t\t</object>\n'
