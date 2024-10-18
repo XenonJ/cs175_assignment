@@ -54,7 +54,7 @@ def parse_usda_file(file_path):
 
 
 # Example usage
-file_path = 'cube.usda'
+file_path = '/Users/qiangyuli/Blender/jumbo.usda'
 xform_data = parse_usda_file(file_path)
 
 # Print the extracted Xform information
@@ -72,21 +72,32 @@ def format_xform_to_xml(xform_data):
     for xform in xform_data:
         # Extract the scale values and format them
         scale_values = xform['scale'].strip('()').split(',')
-        scale_str = f'<scale x="{scale_values[0].strip()}" y="{scale_values[1].strip()}" z="{scale_values[2].strip()}"/>'
+        scale_x = float(scale_values[0].strip()) / 3
+        scale_z = float(scale_values[1].strip()) / 3
+        scale_y = float(scale_values[2].strip()) / 3
+        scale_str = f'<scale x="{scale_x}" y="{scale_y}" z="{scale_z}"/>'
 
         # Extract the translate values and format them
         translate_values = xform['translate'].strip('()').split(',')
-        translate_str = f'<translate x="{translate_values[0].strip()}" y="{translate_values[1].strip()}" z="{translate_values[2].strip()}"/>'
+        translate_x = float(translate_values[0].strip()) / 3
+        translate_z = float(translate_values[1].strip()) / 3
+        translate_y = float(translate_values[2].strip()) / 3
+        # Calculate new translate values as scale * (1 / translate)
+        new_translate_x = translate_x * (1 / (scale_x * 2)) if translate_x != 0 else 0
+        new_translate_z = translate_z * (1 / (scale_z * 2)) if translate_z != 0 else 0
+        new_translate_y = translate_y * (1 / (scale_y * 2)) if translate_y != 0 else 0
+
+        translate_str = f'<translate x="{new_translate_x }" y="{new_translate_y}" z="{new_translate_z}"/>'
 
         # Extract the rotation values and format multiple rotate blocks if necessary
         rotate_values = list(map(float, xform['rotateXYZ'].strip('()').split(',')))
         rotate_strs = []
         if rotate_values[0] != 0:
             rotate_strs.append(f'<rotate x="1" y="0" z="0" angle="{rotate_values[0]}"/>')
-        if rotate_values[1] != 0:
-            rotate_strs.append(f'<rotate x="0" y="1" z="0" angle="{rotate_values[1]}"/>')
         if rotate_values[2] != 0:
-            rotate_strs.append(f'<rotate x="0" y="0" z="1" angle="{rotate_values[2]}"/>')
+            rotate_strs.append(f'<rotate x="0" y="1" z="0" angle="{rotate_values[2]}"/>')
+        if rotate_values[1] != 0:
+            rotate_strs.append(f'<rotate x="0" y="0" z="1" angle="{rotate_values[1]}"/>')
 
         # Extract the mesh name, take the part before the underscore, and convert to lowercase
         if xform['mesh']:
