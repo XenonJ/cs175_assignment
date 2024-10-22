@@ -117,7 +117,7 @@ def format_xform_to_xml(xform_data):
             mesh_name = 'unknown'
 
         object_str = f'<object type="primitive" name="{mesh_name}" >'
-        diffuse_str = '<diffuse r="0" g="0" b="1"/>'
+        diffuse_str = '<diffuse r="0.502" g="0.608" b="0.718"/>'
 
         # Combine all parts into the desired XML-like structure
         transblock_str = (
